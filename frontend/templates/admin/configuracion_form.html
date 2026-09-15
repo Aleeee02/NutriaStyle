@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Configuración · Admin NutriaSyle{% endblock %}
+
+{% block header %}
+{% include "partials/header_admin.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-24 pb-space-3xl bg-background min-h-screen">
+  <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-lg">
+    <div>
+      <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">Configuración del Negocio</h1>
+      <p class="font-body-sm text-body-sm text-on-surface-variant">Estos datos alimentan el pie de página y los enlaces de contacto en todo el sitio.</p>
+    </div>
+
+    <form class="flex flex-col gap-space-md bg-surface-container-low p-space-lg rounded-xl shadow-lg" method="post" action="{{ url_for('admin_configuracion_submit') }}">
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="nombre_barberia">Nombre de la barbería</label>
+        <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="nombre_barberia" name="nombre_barberia" required type="text" value="{{ config.nombre_barberia if config else '' }}" />
+      </div>
+
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="telefono_whatsapp">WhatsApp (con código de país, solo números)</label>
+        <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="telefono_whatsapp" name="telefono_whatsapp" placeholder="51999999999" type="text" value="{{ config.telefono_whatsapp if config else '' }}" />
+      </div>
+
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="direccion">Dirección</label>
+        <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="direccion" name="direccion" type="text" value="{{ config.direccion if config else '' }}" />
+      </div>
+
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="horario">Horario de atención</label>
+        <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="horario" name="horario" placeholder="Lunes a Sábado, 09:00 - 20:00" type="text" value="{{ config.horario if config else '' }}" />
+      </div>
+
+      <div class="grid grid-cols-2 gap-space-sm">
+        <div class="flex flex-col gap-space-2xs">
+          <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="instagram_url">Instagram (URL)</label>
+          <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="instagram_url" name="instagram_url" placeholder="https://instagram.com/tu_barberia" type="text" value="{{ config.instagram_url if config else '' }}" />
+        </div>
+        <div class="flex flex-col gap-space-2xs">
+          <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="facebook_url">Facebook (URL)</label>
+          <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="facebook_url" name="facebook_url" placeholder="https://facebook.com/tu_barberia" type="text" value="{{ config.facebook_url if config else '' }}" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="mision">Misión (opcional)</label>
+        <textarea class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary resize-none" id="mision" name="mision" rows="2">{{ config.mision if config else '' }}</textarea>
+      </div>
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="vision">Visión (opcional)</label>
+        <textarea class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary resize-none" id="vision" name="vision" rows="2">{{ config.vision if config else '' }}</textarea>
+      </div>
+
+      <button class="self-start px-space-lg py-space-sm rounded-lg bg-primary text-on-primary font-headline-sm text-[15px] font-bold uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors" type="submit">
+        Guardar
+      </button>
+    </form>
+  </div>
+</main>
+{% endblock %}

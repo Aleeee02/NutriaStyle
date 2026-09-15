@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+
+{% block title %}Usuarios · Admin NutriaSyle{% endblock %}
+
+{% block header %}
+{% include "partials/header_admin.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-24 pb-space-3xl bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-lg">
+    <div>
+      <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">Usuarios</h1>
+      <p class="font-body-sm text-body-sm text-on-surface-variant">Clientes registrados y su progreso en la tarjeta de fidelización ({{ sellos_meta }} sellos para el corte de cortesía).</p>
+    </div>
+
+    {% if not usuarios %}
+    <p class="font-body-md text-body-md text-on-surface-variant">Todavía no hay usuarios registrados.</p>
+    {% else %}
+    <div class="w-full overflow-x-auto bg-surface-container-low rounded-xl shadow-lg">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container font-label-sm text-label-sm text-secondary uppercase tracking-widest">
+            <th class="py-space-sm px-space-md">Nombre</th>
+            <th class="py-space-sm px-space-md">Email</th>
+            <th class="py-space-sm px-space-md">Rol</th>
+            <th class="py-space-sm px-space-md">Sellos</th>
+            <th class="py-space-sm px-space-md">Faltan p/ Canjear</th>
+            <th class="py-space-sm px-space-md text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="font-body-sm text-body-sm">
+          {% for u in usuarios %}
+          <tr class="border-t border-outline-variant/20">
+            <td class="py-space-sm px-space-md text-on-surface font-medium">{{ u.nombre }} {{ u.apellido or '' }}</td>
+            <td class="py-space-sm px-space-md text-on-surface-variant">{{ u.email or '-' }}</td>
+            <td class="py-space-sm px-space-md">
+              <span class="font-label-sm text-[11px] uppercase tracking-wider px-2 py-0.5 rounded {{ 'bg-primary text-on-primary' if u.rol == 'admin' else 'bg-surface-container-highest text-on-surface-variant' }}">{{ u.rol }}</span>
+            </td>
+            <td class="py-space-sm px-space-md text-primary font-semibold">{{ u.sellos }}</td>
+            <td class="py-space-sm px-space-md">
+              {% if u.listo_para_canjear %}
+              <span class="font-label-sm text-[11px] uppercase tracking-wider text-primary">¡Listo para canjear!</span>
+              {% else %}
+              <span class="text-on-surface-variant">{{ u.faltan }}</span>
+              {% endif %}
+            </td>
+            <td class="py-space-sm px-space-md text-right whitespace-nowrap">
+              <form action="{{ url_for('admin_usuario_agregar_sello', usuario_id=u.id) }}" class="inline" method="post">
+                <button class="text-secondary hover:text-primary font-label-sm text-label-sm uppercase tracking-wider" type="submit">+1 Sello</button>
+              </form>
+              {% if u.listo_para_canjear %}
+              <form action="{{ url_for('admin_usuario_canjear', usuario_id=u.id) }}" class="inline" method="post">
+                <button class="ml-space-sm text-primary hover:text-primary-fixed-dim font-label-sm text-label-sm uppercase tracking-wider font-bold" type="submit">Canjear</button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

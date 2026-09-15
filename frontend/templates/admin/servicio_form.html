@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}{{ "Editar" if servicio else "Nuevo" }} Servicio · Admin NutriaSyle{% endblock %}
+
+{% block header %}
+{% include "partials/header_admin.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-24 pb-space-3xl bg-background min-h-screen">
+  <div class="max-w-2xl mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-lg">
+    <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">{{ "Editar Servicio" if servicio else "Nuevo Servicio" }}</h1>
+
+    <form
+      class="flex flex-col gap-space-md bg-surface-container-low p-space-lg rounded-xl shadow-lg"
+      method="post"
+      action="{{ url_for('admin_servicio_editar_submit', servicio_id=servicio.id) if servicio else url_for('admin_servicio_nuevo_submit') }}"
+    >
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="nombre">Nombre</label>
+        <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="nombre" name="nombre" required type="text" value="{{ servicio.nombre if servicio else '' }}" />
+      </div>
+
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="categoria_id">Categoría</label>
+        <select class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="categoria_id" name="categoria_id" required>
+          {% for c in categorias %}
+          <option value="{{ c.id }}" {% if servicio and servicio.categoria_id == c.id %}selected{% endif %}>{{ c.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="descripcion">Descripción</label>
+        <textarea class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary resize-none" id="descripcion" name="descripcion" rows="3">{{ servicio.descripcion if servicio else '' }}</textarea>
+      </div>
+
+      <div class="grid grid-cols-2 gap-space-sm">
+        <div class="flex flex-col gap-space-2xs">
+          <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="precio">Precio (€)</label>
+          <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="precio" min="0" name="precio" required step="0.01" type="number" value="{{ servicio.precio if servicio else '' }}" />
+        </div>
+        <div class="flex flex-col gap-space-2xs">
+          <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="duracion_minutos">Duración (min)</label>
+          <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="duracion_minutos" min="1" name="duracion_minutos" required step="1" type="number" value="{{ servicio.duracion_minutos if servicio else '' }}" />
+        </div>
+      </div>
+
+      <div class="flex flex-col gap-space-2xs">
+        <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="imagen_url">URL de imagen (opcional)</label>
+        <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="imagen_url" name="imagen_url" type="text" value="{{ servicio.imagen_url if servicio else '' }}" />
+      </div>
+
+      {% if servicio %}
+      <label class="flex items-center gap-space-xs font-label-md text-label-md text-on-surface-variant">
+        <input {% if servicio.activo %}checked{% endif %} name="activo" type="checkbox" />
+        Servicio activo (visible en el sitio)
+      </label>
+      {% endif %}
+
+      <div class="flex items-center gap-space-sm mt-space-xs">
+        <button class="px-space-lg py-space-sm rounded-lg bg-primary text-on-primary font-headline-sm text-[15px] font-bold uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors" type="submit">
+          Guardar
+        </button>
+        <a class="font-label-md text-label-md uppercase tracking-wider text-outline hover:text-primary transition-colors" href="{{ url_for('admin_servicios_list') }}">Cancelar</a>
+      </div>
+    </form>
+  </div>
+</main>
+{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Empleados · Admin NutriaSyle{% endblock %}
+
+{% block header %}
+{% include "partials/header_admin.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-24 pb-space-3xl bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-lg">
+    <div class="flex items-center justify-between gap-space-md">
+      <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">Empleados</h1>
+      <a class="px-space-md py-space-xs rounded-lg bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors" href="{{ url_for('admin_empleado_nuevo_form') }}">
+        + Nuevo Empleado
+      </a>
+    </div>
+
+    {% if not empleados %}
+    <p class="font-body-md text-body-md text-on-surface-variant">Todavía no hay empleados cargados.</p>
+    {% else %}
+    <div class="w-full overflow-x-auto bg-surface-container-low rounded-xl shadow-lg">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container font-label-sm text-label-sm text-secondary uppercase tracking-widest">
+            <th class="py-space-sm px-space-md">Nombre</th>
+            <th class="py-space-sm px-space-md">Teléfono</th>
+            <th class="py-space-sm px-space-md">Estado</th>
+            <th class="py-space-sm px-space-md text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="font-body-sm text-body-sm">
+          {% for e in empleados %}
+          <tr class="border-t border-outline-variant/20">
+            <td class="py-space-sm px-space-md text-on-surface font-medium">{{ e.nombre }} {{ e.apellido or '' }}</td>
+            <td class="py-space-sm px-space-md text-on-surface-variant">{{ e.telefono or '-' }}</td>
+            <td class="py-space-sm px-space-md">
+              {% if e.activo %}
+              <span class="font-label-sm text-[11px] uppercase tracking-wider text-primary bg-primary-container/10 px-2 py-0.5 rounded">Activo</span>
+              {% else %}
+              <span class="font-label-sm text-[11px] uppercase tracking-wider text-outline bg-surface-container-highest px-2 py-0.5 rounded">Inactivo</span>
+              {% endif %}
+            </td>
+            <td class="py-space-sm px-space-md text-right whitespace-nowrap">
+              <a class="text-secondary hover:text-primary font-label-sm text-label-sm uppercase tracking-wider" href="{{ url_for('admin_empleado_horarios', empleado_id=e.id) }}">Horarios</a>
+              <a class="ml-space-sm text-secondary hover:text-primary font-label-sm text-label-sm uppercase tracking-wider" href="{{ url_for('admin_empleado_editar_form', empleado_id=e.id) }}">Editar</a>
+              <form action="{{ url_for('admin_empleado_toggle_activo', empleado_id=e.id) }}" class="inline" method="post">
+                <button class="ml-space-sm text-outline hover:text-error font-label-sm text-label-sm uppercase tracking-wider" type="submit">
+                  {{ "Desactivar" if e.activo else "Activar" }}
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

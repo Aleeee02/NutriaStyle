@@ -1,0 +1,31 @@
+<header class="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/85 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
+  <div class="h-20 max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-between gap-space-md">
+    <div class="flex items-center gap-space-sm shrink-0">
+      <img alt="NutriaSyle Logo" class="h-11 w-11 rounded-full object-cover" src="{{ url_for('static', path='img/logo.jpeg') }}" />
+      <span class="font-headline-sm text-headline-sm text-primary tracking-wide hidden sm:inline-block">NutriaSyle</span>
+    </div>
+    <nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary font-bold">
+      <a {% if active_path == "inicio-historia" %}aria-current="page" class="uppercase tracking-wider transition-colors text-primary font-bold"{% else %}class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"{% endif %} data-path="inicio-historia" href="{{ url_for('home') }}">Inicio &amp; Historia</a>
+      <a {% if active_path == "servicios-tarifas" %}aria-current="page" class="uppercase tracking-wider transition-colors text-primary font-bold"{% else %}class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"{% endif %} data-path="servicios-tarifas" href="{{ url_for('tarifas') }}">Servicios &amp; Tarifas</a>
+      <a {% if active_path == "reservar-cita" %}aria-current="page" class="uppercase tracking-wider transition-colors text-primary font-bold"{% else %}class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"{% endif %} data-path="reservar-cita" href="{{ url_for('reservas') }}">Reservar Cita</a>
+      <a {% if active_path == "equipo-resenas" %}aria-current="page" class="uppercase tracking-wider transition-colors text-primary font-bold"{% else %}class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"{% endif %} data-path="equipo-resenas" href="{{ url_for('barberos') }}">Equipo &amp; Reseñas</a>
+    </nav>
+    <div class="flex items-center gap-space-md">
+      <a class="inline-flex items-center justify-center px-space-md py-space-xs rounded-lg bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed-dim hover:text-on-primary-fixed transition-all shadow-[0_0_16px_rgba(229,193,88,0.25)]" data-path="reservar-cita" href="{{ url_for('reservas') }}">Reservar Cita</a>
+      {% if current_user %}
+      <div class="flex items-center gap-space-xs pl-space-xs border-l border-outline-variant/40">
+        {% if is_admin %}
+        <a class="font-label-md text-label-md uppercase tracking-wider text-primary hover:text-primary-fixed-dim transition-colors font-bold" href="{{ url_for('admin_dashboard') }}">Panel Admin</a>
+        {% endif %}
+        <a class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="{{ url_for('fidelizacion') }}">Mi Cuenta</a>
+        <a class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="{{ url_for('logout') }}">Salir</a>
+      </div>
+      {% else %}
+      <div class="flex items-center gap-space-xs pl-space-xs border-l border-outline-variant/40">
+        <a class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="{{ url_for('login_page') }}">Iniciar Sesión</a>
+        <a class="font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="{{ url_for('registro_page') }}">Registrarme</a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</header>

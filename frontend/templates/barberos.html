@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% set active_path = "equipo-resenas" %}
+{% include "partials/header_marketing.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-20 bg-background min-h-screen">
+  <div class="flex flex-col w-full">
+    <section class="relative w-full overflow-hidden py-space-3xl px-margin-mobile md:px-margin-desktop">
+      <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-primary/10 blur-3xl pointer-events-none"></div>
+      <div class="absolute top-1/2 -right-48 w-[500px] h-[500px] rounded-full bg-secondary/5 blur-[120px] pointer-events-none"></div>
+      <div class="max-w-[1280px] mx-auto flex flex-col gap-space-2xl">
+        <div class="flex flex-col gap-space-xs max-w-2xl">
+          <div class="flex items-center gap-space-xs text-secondary">
+            <span class="material-symbols-outlined text-[18px]">verified</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-widest">Maestría Secular &amp; Excelencia Masculina</span>
+          </div>
+          <h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">Nuestro Equipo de Barberos</h1>
+          <p class="font-body-lg text-body-lg text-on-surface-variant mt-space-2xs">
+            Cada barbero de NutriaSyle encarna una devoción inquebrantable por el filo certero, la geometría clásica y el diálogo reposado.
+          </p>
+        </div>
+
+        {% if not empleados %}
+        <p class="font-body-md text-body-md text-on-surface-variant bg-surface-container-low p-space-lg rounded-xl">Todavía no hay barberos publicados.</p>
+        {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-space-lg">
+          {% for e in empleados %}
+          <article class="flex flex-col bg-surface-container-low rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1.5 hover:shadow-2xl group">
+            <div class="relative w-full h-80 overflow-hidden bg-surface-container-highest flex items-center justify-center">
+              {% if e.foto_url %}
+              <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" src="{{ e.foto_url }}" />
+              {% else %}
+              <span class="font-headline-xl text-headline-xl text-primary font-bold uppercase">{{ e.nombre[0] }}</span>
+              {% endif %}
+              <div class="absolute bottom-space-md left-space-md right-space-md flex justify-between items-end">
+                <h3 class="font-headline-md text-headline-md text-on-surface">{{ e.nombre }} {{ e.apellido or '' }}</h3>
+              </div>
+            </div>
+            <div class="p-space-lg flex flex-col justify-between flex-grow gap-space-md">
+              {% if e.descripcion %}
+              <p class="font-body-md text-body-md text-on-surface-variant">{{ e.descripcion }}</p>
+              {% endif %}
+              <div class="pt-space-sm flex items-center justify-end mt-auto">
+                <a class="px-space-md py-space-xs rounded-lg bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed-dim transition-all shadow-[0_0_12px_rgba(229,193,88,0.2)]" data-path="reservar-cita" href="{{ url_for('reservas') }}">
+                  Ver Disponibilidad
+                </a>
+              </div>
+            </div>
+          </article>
+          {% endfor %}
+        </div>
+        {% endif %}
+      </div>
+    </section>
+
+    <section class="w-full py-space-3xl px-margin-mobile md:px-margin-desktop bg-background relative">
+      <div class="max-w-[1280px] mx-auto p-space-xl rounded-xl bg-surface-container-low shadow-xl flex flex-col md:flex-row items-center justify-between gap-space-lg">
+        <div class="flex flex-col gap-space-2xs text-center md:text-left">
+          <h3 class="font-headline-md text-headline-md text-primary">¿Listo para ocupar tu lugar en la silla?</h3>
+          <p class="font-body-md text-body-md text-on-surface-variant">Reserva previa recomendada. Elige barbero, servicio e infusión de bienvenida.</p>
+        </div>
+        <div class="flex items-center gap-space-md shrink-0">
+          <a class="px-space-xl py-space-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed-dim transition-all shadow-[0_0_20px_rgba(229,193,88,0.3)]" data-path="reservar-cita" href="{{ url_for('reservas') }}">
+            Agendar Experiencia
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>{% endblock %}

@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% block title %}Reservas · Admin NutriaSyle{% endblock %}
+
+{% block header %}
+{% include "partials/header_admin.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-24 pb-space-3xl bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-lg">
+    <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">Reservas</h1>
+
+    <div class="flex items-center gap-space-xs overflow-x-auto pb-space-xs">
+      <a class="px-space-md py-space-xs rounded-full font-label-sm text-label-sm uppercase tracking-wider transition-all {{ 'bg-primary text-on-primary' if not estado_filtro else 'bg-surface-container text-on-surface-variant hover:text-primary' }}" href="{{ url_for('admin_reservas_list') }}">Todas</a>
+      {% for e in estados %}
+      <a class="px-space-md py-space-xs rounded-full font-label-sm text-label-sm uppercase tracking-wider transition-all {{ 'bg-primary text-on-primary' if estado_filtro == e else 'bg-surface-container text-on-surface-variant hover:text-primary' }}" href="{{ url_for('admin_reservas_list') }}?estado={{ e }}">{{ e }}</a>
+      {% endfor %}
+    </div>
+
+    {% if not reservas %}
+    <p class="font-body-md text-body-md text-on-surface-variant">No hay reservas para mostrar.</p>
+    {% else %}
+    <div class="w-full overflow-x-auto bg-surface-container-low rounded-xl shadow-lg">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container font-label-sm text-label-sm text-secondary uppercase tracking-widest">
+            <th class="py-space-sm px-space-md">Fecha</th>
+            <th class="py-space-sm px-space-md">Cliente</th>
+            <th class="py-space-sm px-space-md">Servicio</th>
+            <th class="py-space-sm px-space-md">Barbero</th>
+            <th class="py-space-sm px-space-md">Estado</th>
+          </tr>
+        </thead>
+        <tbody class="font-body-sm text-body-sm">
+          {% for r in reservas %}
+          <tr class="border-t border-outline-variant/20">
+            <td class="py-space-sm px-space-md text-on-surface font-medium whitespace-nowrap">{{ r.fecha }} · {{ r.hora_inicio[0:5] }}</td>
+            <td class="py-space-sm px-space-md text-on-surface-variant">
+              {% if r.usuarios %}{{ r.usuarios.nombre }} {{ r.usuarios.apellido or '' }}<br/><span class="text-outline">{{ r.usuarios.email or '' }}</span>{% else %}-{% endif %}
+            </td>
+            <td class="py-space-sm px-space-md text-on-surface-variant">{{ r.servicios.nombre if r.servicios else '-' }}</td>
+            <td class="py-space-sm px-space-md text-on-surface-variant">{{ (r.empleados.nombre + ' ' + (r.empleados.apellido or '')) if r.empleados else '-' }}</td>
+            <td class="py-space-sm px-space-md">
+              <form action="{{ url_for('admin_reserva_cambiar_estado', reserva_id=r.id) }}" method="post">
+                <select class="px-space-xs py-space-2xs rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm uppercase" name="estado" onchange="this.form.submit()">
+                  {% for e in estados %}
+                  <option value="{{ e }}" {% if r.estado == e %}selected{% endif %}>{{ e }}</option>
+                  {% endfor %}
+                </select>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

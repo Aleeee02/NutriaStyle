@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Servicios · Admin NutriaSyle{% endblock %}
+
+{% block header %}
+{% include "partials/header_admin.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-24 pb-space-3xl bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-lg">
+    <div class="flex items-center justify-between gap-space-md">
+      <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">Servicios</h1>
+      <a class="px-space-md py-space-xs rounded-lg bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors" href="{{ url_for('admin_servicio_nuevo_form') }}">
+        + Nuevo Servicio
+      </a>
+    </div>
+
+    {% if not servicios %}
+    <p class="font-body-md text-body-md text-on-surface-variant">Todavía no hay servicios cargados.</p>
+    {% else %}
+    <div class="w-full overflow-x-auto bg-surface-container-low rounded-xl shadow-lg">
+      <table class="w-full text-left border-collapse">
+        <thead>
+          <tr class="bg-surface-container font-label-sm text-label-sm text-secondary uppercase tracking-widest">
+            <th class="py-space-sm px-space-md">Nombre</th>
+            <th class="py-space-sm px-space-md">Categoría</th>
+            <th class="py-space-sm px-space-md">Precio</th>
+            <th class="py-space-sm px-space-md">Duración</th>
+            <th class="py-space-sm px-space-md">Estado</th>
+            <th class="py-space-sm px-space-md text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="font-body-sm text-body-sm">
+          {% for s in servicios %}
+          <tr class="border-t border-outline-variant/20">
+            <td class="py-space-sm px-space-md text-on-surface font-medium">{{ s.nombre }}</td>
+            <td class="py-space-sm px-space-md text-on-surface-variant">{{ s.categorias_servicio.nombre if s.categorias_servicio else "-" }}</td>
+            <td class="py-space-sm px-space-md text-secondary">{{ "%.2f"|format(s.precio) }} €</td>
+            <td class="py-space-sm px-space-md text-on-surface-variant">{{ s.duracion_minutos }} min</td>
+            <td class="py-space-sm px-space-md">
+              {% if s.activo %}
+              <span class="font-label-sm text-[11px] uppercase tracking-wider text-primary bg-primary-container/10 px-2 py-0.5 rounded">Activo</span>
+              {% else %}
+              <span class="font-label-sm text-[11px] uppercase tracking-wider text-outline bg-surface-container-highest px-2 py-0.5 rounded">Inactivo</span>
+              {% endif %}
+            </td>
+            <td class="py-space-sm px-space-md text-right whitespace-nowrap">
+              <a class="text-secondary hover:text-primary font-label-sm text-label-sm uppercase tracking-wider" href="{{ url_for('admin_servicio_editar_form', servicio_id=s.id) }}">Editar</a>
+              <form action="{{ url_for('admin_servicio_toggle_activo', servicio_id=s.id) }}" class="inline" method="post">
+                <button class="ml-space-sm text-outline hover:text-error font-label-sm text-label-sm uppercase tracking-wider" type="submit">
+                  {{ "Desactivar" if s.activo else "Activar" }}
+                </button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    {% endif %}
+  </div>
+</main>
+{% endblock %}

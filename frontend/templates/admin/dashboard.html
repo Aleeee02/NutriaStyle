@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}Panel Admin · NutriaSyle{% endblock %}
+
+{% block header %}
+{% include "partials/header_admin.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-24 pb-space-3xl bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-lg">
+    <h1 class="font-headline-lg text-headline-lg text-on-surface font-bold">Panel de Administración</h1>
+
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md">
+      <a class="flex flex-col gap-space-2xs bg-surface-container-low hover:bg-surface-container p-space-lg rounded-xl shadow-lg transition-colors" href="{{ url_for('admin_servicios_list') }}">
+        <span class="material-symbols-outlined text-primary text-[28px]">content_cut</span>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface">Servicios</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Crea, edita y activa/desactiva los servicios y precios que se muestran en Tarifas y Reservas.</p>
+      </a>
+      <a class="flex flex-col gap-space-2xs bg-surface-container-low hover:bg-surface-container p-space-lg rounded-xl shadow-lg transition-colors" href="{{ url_for('admin_empleados_list') }}">
+        <span class="material-symbols-outlined text-primary text-[28px]">groups</span>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface">Empleados</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Gestiona tu equipo de barberos y el horario semanal de cada uno.</p>
+      </a>
+      <a class="flex flex-col gap-space-2xs bg-surface-container-low hover:bg-surface-container p-space-lg rounded-xl shadow-lg transition-colors" href="{{ url_for('admin_usuarios_list') }}">
+        <span class="material-symbols-outlined text-primary text-[28px]">person</span>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface">Usuarios</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Consulta tus clientes registrados y marca sellos de fidelización.</p>
+      </a>
+      <a class="flex flex-col gap-space-2xs bg-surface-container-low hover:bg-surface-container p-space-lg rounded-xl shadow-lg transition-colors" href="{{ url_for('admin_reservas_list') }}">
+        <span class="material-symbols-outlined text-primary text-[28px]">event_available</span>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface">Reservas</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Ve la agenda completa y confirma, cancela o marca citas como completadas.</p>
+      </a>
+      <a class="flex flex-col gap-space-2xs bg-surface-container-low hover:bg-surface-container p-space-lg rounded-xl shadow-lg transition-colors" href="{{ url_for('admin_configuracion_form') }}">
+        <span class="material-symbols-outlined text-primary text-[28px]">settings</span>
+        <h2 class="font-headline-sm text-headline-sm text-on-surface">Configuración</h2>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Datos del negocio: WhatsApp, dirección, horario y redes sociales.</p>
+      </a>
+    </div>
+  </div>
+</main>
+{% endblock %}

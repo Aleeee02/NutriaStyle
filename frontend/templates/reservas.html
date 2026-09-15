@@ -1,0 +1,421 @@
+{% extends "base.html" %}
+
+{% block title %}Reservar Cita · NutriaSyle{% endblock %}
+
+{% block header %}
+{% include "partials/header_account.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-24 pb-space-3xl bg-background min-h-screen">
+  <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-xl">
+
+    {% if confirmada %}
+    <div class="bg-secondary-container/40 border border-secondary/40 text-secondary p-space-md rounded-xl font-body-md text-body-md">
+      ¡Reserva registrada con éxito! Queda en estado <strong>pendiente</strong> hasta que el salón la confirme.
+    </div>
+    {% endif %}
+    {% if error %}
+    <div class="bg-error-container/20 border border-error/40 text-error p-space-md rounded-xl font-body-md text-body-md">
+      {{ error }}
+    </div>
+    {% endif %}
+
+    <!-- Step Indicator -->
+    <div class="w-full bg-surface-container-low rounded-xl p-space-md shadow-xl">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-space-md">
+        <div class="flex items-center gap-space-sm">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+            <span class="material-symbols-outlined text-[22px]">calendar_month</span>
+          </div>
+          <div>
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block">NutriaSyle Concierge</span>
+            <span class="font-headline-sm text-headline-sm text-on-surface">Agendamiento Artesanal</span>
+          </div>
+        </div>
+        <div class="flex items-center gap-space-xs sm:gap-space-sm overflow-x-auto w-full md:w-auto pb-2 md:pb-0">
+          <div class="flex items-center gap-space-xs shrink-0 cursor-pointer step-indicator group" id="step-node-1" onclick="switchStep(1)">
+            <span class="w-7 h-7 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold shadow-[0_0_12px_rgba(229,193,88,0.35)] step-badge">1</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-primary step-label">Servicio</span>
+          </div>
+          <div class="w-5 h-[2px] bg-outline-variant/60 shrink-0"></div>
+          <div class="flex items-center gap-space-xs shrink-0 cursor-pointer step-indicator opacity-60 group" id="step-node-2" onclick="switchStep(2)">
+            <span class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold step-badge">2</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant step-label">Maestro</span>
+          </div>
+          <div class="w-5 h-[2px] bg-outline-variant/60 shrink-0"></div>
+          <div class="flex items-center gap-space-xs shrink-0 cursor-pointer step-indicator opacity-60 group" id="step-node-3" onclick="switchStep(3)">
+            <span class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold step-badge">3</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant step-label">Fecha y Hora</span>
+          </div>
+          <div class="w-5 h-[2px] bg-outline-variant/60 shrink-0"></div>
+          <div class="flex items-center gap-space-xs shrink-0 cursor-pointer step-indicator opacity-60 group" id="step-node-4" onclick="switchStep(4)">
+            <span class="w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold step-badge">4</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant step-label">Confirmación</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-start">
+      <div class="lg:col-span-8 flex flex-col gap-space-xl">
+
+        <!-- STEP 1: SERVICIOS -->
+        <section class="flex flex-col gap-space-lg" id="pane-step-1">
+          <div>
+            <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest block">Paso 1 de 4</span>
+            <h1 class="font-headline-md text-headline-md text-on-surface">Selección de Servicio</h1>
+          </div>
+
+          {% if categorias %}
+          <div class="flex items-center gap-space-xs overflow-x-auto pb-space-xs">
+            <button class="category-btn active-filter px-space-md py-space-xs rounded-full bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider transition-all" data-categoria="all" onclick="filterCategory('all', this)">
+              Todos
+            </button>
+            {% for c in categorias %}
+            <button class="category-btn px-space-md py-space-xs rounded-full bg-surface-container text-on-surface-variant hover:text-primary font-label-sm text-label-sm uppercase tracking-wider transition-all" data-categoria="{{ c.id }}" onclick="filterCategory('{{ c.id }}', this)">
+              {{ c.nombre }}
+            </button>
+            {% endfor %}
+          </div>
+          {% endif %}
+
+          {% if not servicios %}
+          <p class="font-body-md text-body-md text-on-surface-variant bg-surface-container-low p-space-lg rounded-xl">
+            Todavía no hay servicios publicados. Vuelve pronto.
+          </p>
+          {% else %}
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+            {% for s in servicios %}
+            <div
+              class="service-card group cursor-pointer bg-surface-container-low hover:bg-surface-container transition-all duration-300 rounded-xl p-space-md flex flex-col justify-between shadow-md relative overflow-hidden"
+              data-categoria="{{ s.categoria_id }}"
+              data-id="{{ s.id }}"
+              data-nombre="{{ s.nombre }}"
+              data-precio="{{ s.precio }}"
+              data-duracion="{{ s.duracion_minutos }}"
+              onclick="selectService(this)"
+            >
+              <div class="flex flex-col gap-space-xs relative z-10">
+                <div class="flex items-start justify-between gap-space-xs">
+                  <h2 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">{{ s.nombre }}</h2>
+                  <span class="font-headline-sm text-headline-sm text-primary shrink-0">{{ "%.0f"|format(s.precio) }}€</span>
+                </div>
+                {% if s.descripcion %}
+                <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ s.descripcion }}</p>
+                {% endif %}
+              </div>
+              <div class="flex items-center justify-between mt-space-md pt-space-xs relative z-10">
+                <div class="flex items-center gap-space-2xs text-outline font-label-sm text-label-sm uppercase">
+                  <span class="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+                  <span>{{ s.duracion_minutos }} minutos</span>
+                </div>
+                <div class="service-check-indicator w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-outline group-hover:text-primary group-hover:bg-surface-bright transition-all">
+                  <span class="material-symbols-outlined text-[18px]">add</span>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </section>
+
+        <!-- STEP 2: BARBEROS -->
+        <section class="flex flex-col gap-space-md pt-space-md" id="pane-step-2">
+          <div>
+            <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest block">Paso 2 de 4</span>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Selecciona a tu Barbero</h2>
+          </div>
+
+          {% if not empleados %}
+          <p class="font-body-md text-body-md text-on-surface-variant bg-surface-container-low p-space-lg rounded-xl">
+            Todavía no hay barberos publicados.
+          </p>
+          {% else %}
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-space-md">
+            {% for e in empleados %}
+            <div
+              class="barber-card cursor-pointer bg-surface-container-low hover:bg-surface-container rounded-xl p-space-md flex flex-col items-center text-center transition-all duration-300 shadow-md relative"
+              data-id="{{ e.id }}"
+              data-nombre="{{ e.nombre }} {{ e.apellido or '' }}"
+              onclick="selectBarber(this)"
+            >
+              <div class="relative mb-space-sm">
+                {% if e.foto_url %}
+                <img class="w-20 h-20 rounded-full object-cover shadow-lg" src="{{ e.foto_url }}" />
+                {% else %}
+                <div class="w-20 h-20 rounded-full bg-surface-container-high flex items-center justify-center text-primary font-headline-md text-headline-md font-bold uppercase shadow-lg">{{ e.nombre[0] }}</div>
+                {% endif %}
+                <span class="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-primary hidden select-icon items-center justify-center text-on-primary">
+                  <span class="material-symbols-outlined text-[12px] font-bold">check</span>
+                </span>
+              </div>
+              <h3 class="font-headline-sm text-headline-sm text-on-surface barber-name">{{ e.nombre }} {{ e.apellido or '' }}</h3>
+              {% if e.descripcion %}
+              <p class="font-body-sm text-body-sm text-outline mt-2 leading-tight">{{ e.descripcion }}</p>
+              {% endif %}
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </section>
+
+        <!-- STEP 3: FECHA Y HORA -->
+        <section class="flex flex-col gap-space-lg pt-space-md" id="pane-step-3">
+          <div>
+            <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest block">Paso 3 de 4</span>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Fecha &amp; Horario Deseado</h2>
+          </div>
+          <div class="bg-surface-container-low p-space-md rounded-xl shadow-lg flex flex-col gap-space-md">
+            <div class="flex flex-col gap-space-2xs max-w-xs">
+              <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="fecha-input">Fecha</label>
+              <input class="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary" id="fecha-input" type="date" onchange="onFechaChange(this.value)" />
+            </div>
+            <div id="slots-container" class="flex flex-col gap-space-sm">
+              <p class="font-body-sm text-body-sm text-outline">Elige un servicio, un barbero y una fecha para ver los horarios disponibles.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- STEP 4: CONFIRMACION -->
+        <section class="flex flex-col gap-space-md pt-space-md" id="pane-step-4">
+          <div>
+            <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest block">Paso 4 de 4</span>
+            <h2 class="font-headline-md text-headline-md text-on-surface">Confirmación</h2>
+          </div>
+          <form class="bg-surface-container-low p-space-lg rounded-xl shadow-lg flex flex-col gap-space-md" id="booking-form" method="post" action="{{ url_for('reservas_confirmar') }}">
+            <input id="input-servicio-id" name="servicio_id" type="hidden" />
+            <input id="input-empleado-id" name="empleado_id" type="hidden" />
+            <input id="input-fecha" name="fecha" type="hidden" />
+            <input id="input-hora-inicio" name="hora_inicio" type="hidden" />
+            <div class="flex flex-col gap-space-2xs">
+              <label class="font-label-sm text-label-sm uppercase tracking-wider text-secondary" for="observaciones">Preferencias especiales (opcional)</label>
+              <textarea class="w-full bg-surface-container text-on-surface px-space-md py-space-xs rounded-lg focus:outline-none focus:bg-surface-container-high transition-colors font-body-md text-body-md resize-none" id="observaciones" name="observaciones" placeholder="Ej: piel sensible, referencia de corte anterior..." rows="3"></textarea>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <!-- RESUMEN LATERAL -->
+      <div class="lg:col-span-4 lg:sticky lg:top-28">
+        <div class="bg-surface-container rounded-xl p-space-lg shadow-2xl flex flex-col gap-space-md relative overflow-hidden">
+          <div class="flex items-center justify-between pb-space-sm border-b border-outline-variant/30">
+            <div class="flex flex-col">
+              <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Resumen de Cita</span>
+              <h2 class="font-headline-sm text-headline-sm text-primary">NutriaSyle</h2>
+            </div>
+            <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+              <span class="material-symbols-outlined text-[24px]">content_cut</span>
+            </div>
+          </div>
+          <div class="flex flex-col gap-space-sm py-space-2xs">
+            <div class="flex items-start justify-between gap-space-xs">
+              <div class="flex items-start gap-space-xs">
+                <span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">brush</span>
+                <div>
+                  <span class="font-label-sm text-label-sm uppercase text-outline block">Servicio</span>
+                  <span class="font-headline-sm text-[17px] text-on-surface leading-tight font-semibold" id="sum-service">Sin elegir</span>
+                  <span class="font-body-sm text-body-sm text-secondary block mt-0.5" id="sum-duration">-</span>
+                </div>
+              </div>
+              <span class="font-headline-sm text-headline-sm text-primary" id="sum-price">-</span>
+            </div>
+            <div class="flex items-start gap-space-xs pt-space-xs border-t border-outline-variant/20">
+              <span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">person</span>
+              <div>
+                <span class="font-label-sm text-label-sm uppercase text-outline block">Maestro Asignado</span>
+                <span class="font-headline-sm text-[16px] text-on-surface font-semibold" id="sum-barber">Sin elegir</span>
+              </div>
+            </div>
+            <div class="flex items-start gap-space-xs pt-space-xs border-t border-outline-variant/20">
+              <span class="material-symbols-outlined text-secondary text-[20px] mt-0.5">schedule</span>
+              <div>
+                <span class="font-label-sm text-label-sm uppercase text-outline block">Fecha &amp; Horario</span>
+                <span class="font-headline-sm text-[16px] text-primary font-semibold" id="sum-datetime">Sin elegir</span>
+              </div>
+            </div>
+          </div>
+          <div class="bg-surface-container-lowest p-space-md rounded-xl flex flex-col gap-space-2xs">
+            <div class="flex justify-between items-baseline">
+              <span class="font-headline-sm text-headline-sm text-on-surface font-bold">Total a Pagar</span>
+              <span class="font-headline-md text-headline-md text-primary font-bold" id="total-val">-</span>
+            </div>
+          </div>
+          <button class="w-full py-space-md px-space-md rounded-lg bg-primary hover:bg-primary-fixed-dim text-on-primary font-headline-sm text-[17px] font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-space-xs shadow-[0_0_24px_rgba(229,193,88,0.3)] hover:shadow-[0_0_32px_rgba(229,193,88,0.45)] disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none" disabled id="btn-confirm-booking" onclick="submitBooking()" type="button">
+            <span class="material-symbols-outlined text-[20px]">check_circle</span>
+            <span>Confirmar Reserva</span>
+          </button>
+          <div class="flex items-center gap-space-xs text-on-surface-variant px-space-xs">
+            <span class="material-symbols-outlined text-secondary text-[18px]">verified_user</span>
+            <span class="font-body-sm text-[13px] text-outline">Tu cita queda pendiente de confirmación del salón</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const currentBooking = {
+      servicioId: null, servicioNombre: "", duracion: 0, precio: 0,
+      empleadoId: null, empleadoNombre: "",
+      fecha: "", horaInicio: "",
+    };
+
+    const fechaInput = document.getElementById("fecha-input");
+    const hoy = new Date().toISOString().slice(0, 10);
+    fechaInput.min = hoy;
+
+    function selectService(cardEl) {
+      document.querySelectorAll(".service-card").forEach((card) => {
+        card.classList.remove("bg-surface-container", "selected-service");
+        card.classList.add("bg-surface-container-low");
+        const icon = card.querySelector(".service-check-indicator");
+        icon.className = "service-check-indicator w-8 h-8 rounded-full bg-surface-container-high flex items-center justify-center text-outline group-hover:text-primary group-hover:bg-surface-bright transition-all";
+        icon.innerHTML = '<span class="material-symbols-outlined text-[18px]">add</span>';
+      });
+
+      cardEl.classList.remove("bg-surface-container-low");
+      cardEl.classList.add("bg-surface-container", "selected-service");
+      const activeIcon = cardEl.querySelector(".service-check-indicator");
+      activeIcon.className = "service-check-indicator w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center shadow-[0_0_10px_rgba(229,193,88,0.4)]";
+      activeIcon.innerHTML = '<span class="material-symbols-outlined text-[18px]">check</span>';
+
+      currentBooking.servicioId = cardEl.dataset.id;
+      currentBooking.servicioNombre = cardEl.dataset.nombre;
+      currentBooking.precio = parseFloat(cardEl.dataset.precio);
+      currentBooking.duracion = parseInt(cardEl.dataset.duracion, 10);
+      currentBooking.horaInicio = "";
+      updateSummary();
+      fetchSlots();
+    }
+
+    function selectBarber(cardEl) {
+      document.querySelectorAll(".barber-card").forEach((c) => {
+        c.classList.remove("bg-surface-container", "selected-barber");
+        c.classList.add("bg-surface-container-low");
+        const icon = c.querySelector(".select-icon");
+        icon.classList.add("hidden");
+        icon.classList.remove("flex");
+      });
+
+      cardEl.classList.remove("bg-surface-container-low");
+      cardEl.classList.add("bg-surface-container", "selected-barber");
+      const icon = cardEl.querySelector(".select-icon");
+      icon.classList.remove("hidden");
+      icon.classList.add("flex");
+
+      currentBooking.empleadoId = cardEl.dataset.id;
+      currentBooking.empleadoNombre = cardEl.dataset.nombre;
+      currentBooking.horaInicio = "";
+      updateSummary();
+      fetchSlots();
+    }
+
+    function onFechaChange(valor) {
+      currentBooking.fecha = valor;
+      currentBooking.horaInicio = "";
+      updateSummary();
+      fetchSlots();
+    }
+
+    function filterCategory(categoria, buttonEl) {
+      document.querySelectorAll(".category-btn").forEach((btn) => {
+        btn.classList.remove("bg-primary", "text-on-primary", "active-filter");
+        btn.classList.add("bg-surface-container", "text-on-surface-variant");
+      });
+      buttonEl.classList.remove("bg-surface-container", "text-on-surface-variant");
+      buttonEl.classList.add("bg-primary", "text-on-primary", "active-filter");
+
+      document.querySelectorAll(".service-card").forEach((c) => {
+        c.style.display = categoria === "all" || c.dataset.categoria === categoria ? "flex" : "none";
+      });
+    }
+
+    function fetchSlots() {
+      const container = document.getElementById("slots-container");
+      if (!currentBooking.servicioId || !currentBooking.empleadoId || !currentBooking.fecha) {
+        container.innerHTML = '<p class="font-body-sm text-body-sm text-outline">Elige un servicio, un barbero y una fecha para ver los horarios disponibles.</p>';
+        return;
+      }
+
+      container.innerHTML = '<p class="font-body-sm text-body-sm text-outline">Buscando horarios disponibles…</p>';
+
+      const url = `/api/disponibilidad?empleado_id=${encodeURIComponent(currentBooking.empleadoId)}&fecha=${encodeURIComponent(currentBooking.fecha)}&duracion_minutos=${currentBooking.duracion}`;
+      fetch(url)
+        .then((r) => r.json())
+        .then((data) => {
+          const slots = data.slots || [];
+          if (slots.length === 0) {
+            container.innerHTML = '<p class="font-body-sm text-body-sm text-error">Ese barbero no tiene horarios libres ese día. Prueba otra fecha.</p>';
+            return;
+          }
+          container.innerHTML = "";
+          const grid = document.createElement("div");
+          grid.className = "grid grid-cols-3 sm:grid-cols-6 gap-space-xs";
+          slots.forEach((hora) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "time-btn py-space-xs rounded-lg bg-surface-container hover:bg-surface-bright text-on-surface font-label-md text-label-md transition-all";
+            btn.textContent = hora;
+            btn.onclick = () => selectTime(hora, btn);
+            grid.appendChild(btn);
+          });
+          container.appendChild(grid);
+        });
+    }
+
+    function selectTime(hora, btnEl) {
+      document.querySelectorAll(".time-btn").forEach((btn) => {
+        btn.classList.remove("bg-primary", "text-on-primary", "font-bold", "shadow-[0_0_12px_rgba(229,193,88,0.3)]", "active-time");
+        btn.classList.add("bg-surface-container", "text-on-surface");
+      });
+      btnEl.classList.remove("bg-surface-container", "text-on-surface");
+      btnEl.classList.add("bg-primary", "text-on-primary", "font-bold", "shadow-[0_0_12px_rgba(229,193,88,0.3)]", "active-time");
+
+      currentBooking.horaInicio = hora;
+      updateSummary();
+    }
+
+    function switchStep(stepNum) {
+      for (let i = 1; i <= 4; i++) {
+        const node = document.getElementById(`step-node-${i}`);
+        const badge = node.querySelector(".step-badge");
+        const label = node.querySelector(".step-label");
+        if (i <= stepNum) {
+          node.classList.remove("opacity-60");
+          badge.className = "w-7 h-7 rounded-full bg-primary text-on-primary font-label-sm text-label-sm flex items-center justify-center font-bold shadow-[0_0_12px_rgba(229,193,88,0.35)] step-badge";
+          label.className = "font-label-sm text-label-sm uppercase tracking-wider text-primary step-label";
+        } else {
+          node.classList.add("opacity-60");
+          badge.className = "w-7 h-7 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm flex items-center justify-center font-bold step-badge";
+          label.className = "font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant step-label";
+        }
+      }
+      document.getElementById(`pane-step-${stepNum}`).scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function updateSummary() {
+      document.getElementById("sum-service").innerText = currentBooking.servicioNombre || "Sin elegir";
+      document.getElementById("sum-duration").innerText = currentBooking.duracion ? `${currentBooking.duracion} minutos` : "-";
+      document.getElementById("sum-price").innerText = currentBooking.precio ? `${currentBooking.precio}€` : "-";
+      document.getElementById("sum-barber").innerText = currentBooking.empleadoNombre || "Sin elegir";
+      document.getElementById("sum-datetime").innerText = currentBooking.fecha && currentBooking.horaInicio
+        ? `${currentBooking.fecha} • ${currentBooking.horaInicio} h`
+        : "Sin elegir";
+      document.getElementById("total-val").innerText = currentBooking.precio ? `${currentBooking.precio}€` : "-";
+
+      document.getElementById("input-servicio-id").value = currentBooking.servicioId || "";
+      document.getElementById("input-empleado-id").value = currentBooking.empleadoId || "";
+      document.getElementById("input-fecha").value = currentBooking.fecha || "";
+      document.getElementById("input-hora-inicio").value = currentBooking.horaInicio || "";
+
+      const listo = currentBooking.servicioId && currentBooking.empleadoId && currentBooking.fecha && currentBooking.horaInicio;
+      document.getElementById("btn-confirm-booking").disabled = !listo;
+    }
+
+    function submitBooking() {
+      document.getElementById("booking-form").submit();
+    }
+  </script>
+</main>
+{% endblock %}

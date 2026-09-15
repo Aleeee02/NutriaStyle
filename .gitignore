@@ -1,0 +1,17 @@
+# Python
+backend/.venv/
+__pycache__/
+*.pyc
+
+# Variables de entorno (nunca subir credenciales)
+.env
+backend/.env
+
+# Node / frontend
+frontend/node_modules/
+frontend/dist/
+frontend/*.tsbuildinfo
+
+# Editor / sistema
+.DS_Store
+.vscode/

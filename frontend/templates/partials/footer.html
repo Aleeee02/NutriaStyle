@@ -1,0 +1,49 @@
+{% set config = get_configuracion() %}
+<footer class="w-full bg-surface-container-lowest border-t border-outline-variant/30">
+  <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop py-space-3xl">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl">
+      <div class="flex flex-col gap-space-sm">
+        <div class="flex items-center gap-space-xs"><img alt="NutriaSyle Logo" class="h-9 w-9 rounded-full object-cover" src="{{ url_for('static', path='img/logo.jpeg') }}" /><span class="font-headline-sm text-headline-sm text-primary">{{ config.nombre_barberia }}</span></div>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Santuario de estilismo masculino, rituales tradicionales de afeitado con navaja y cuidado artesanal exclusivo.</p>
+        <div class="flex items-center gap-space-xs text-primary"><span class="material-symbols-outlined text-[18px]">verified</span><span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Garantía de Servicio Artesanal</span></div>
+      </div>
+      <div class="flex flex-col gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary">Horarios de Atención</span>
+        <div class="flex flex-col gap-space-2xs text-on-surface-variant font-body-sm text-body-sm">
+          {% if config.horario %}
+          <span>{{ config.horario }}</span>
+          {% else %}
+          <span class="text-outline">Horario por confirmar</span>
+          {% endif %}
+        </div>
+      </div>
+      <div class="flex flex-col gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary">Ubicación &amp; Contacto</span>
+        <div class="flex flex-col gap-space-xs text-on-surface-variant font-body-sm text-body-sm">
+          <div class="flex items-start gap-space-xs"><span class="material-symbols-outlined text-secondary text-[20px] shrink-0">pin_drop</span><span>{{ config.direccion or "Dirección por confirmar" }}</span></div>
+          {% if config.telefono_whatsapp %}
+          <div class="flex items-center gap-space-xs"><span class="material-symbols-outlined text-secondary text-[20px] shrink-0">call</span><a class="hover:text-primary transition-colors" href="https://wa.me/{{ config.telefono_whatsapp }}" target="_blank">{{ config.telefono_whatsapp }}</a></div>
+          {% endif %}
+        </div>
+      </div>
+      <div class="flex flex-col gap-space-xs"><span class="font-headline-sm text-headline-sm text-primary">Mundo {{ config.nombre_barberia }}</span>
+        <p class="font-body-sm text-body-sm text-on-surface-variant">Sigue la estética del club y las publicaciones editoriales de sastrería capilar.</p>
+        <div class="flex items-center gap-space-xs">
+          {% if config.instagram_url %}
+          <a class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary border border-outline-variant/30 hover:border-primary hover:text-primary transition-colors" href="{{ config.instagram_url }}" target="_blank"><span class="material-symbols-outlined text-[20px]">photo_camera</span></a>
+          {% endif %}
+          {% if config.facebook_url %}
+          <a class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary border border-outline-variant/30 hover:border-primary hover:text-primary transition-colors" href="{{ config.facebook_url }}" target="_blank"><span class="material-symbols-outlined text-[20px]">thumb_up</span></a>
+          {% endif %}
+          {% if config.telefono_whatsapp %}
+          <a class="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary border border-outline-variant/30 hover:border-primary hover:text-primary transition-colors" href="https://wa.me/{{ config.telefono_whatsapp }}" target="_blank"><span class="material-symbols-outlined text-[20px]">chat</span></a>
+          {% endif %}
+          {% if not config.instagram_url and not config.facebook_url and not config.telefono_whatsapp %}
+          <span class="font-body-sm text-body-sm text-outline">Próximamente</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="mt-space-2xl pt-space-lg border-t border-outline-variant/20 flex flex-col md:flex-row items-center justify-between gap-space-md"><span class="font-body-sm text-body-sm text-outline">© 2024 {{ config.nombre_barberia }}. Tradición secular, precisión vanguardista.</span>
+      <div class="flex items-center gap-space-md"><a class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="#">Privacidad</a><a class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="#">Términos del Club</a><a class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="{{ url_for('fidelizacion') }}">Membresías</a></div>
+    </div>
+  </div>
+</footer>

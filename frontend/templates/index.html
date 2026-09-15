@@ -1,0 +1,431 @@
+{% extends "base.html" %}
+
+{% block header %}
+{% set active_path = "inicio-historia" %}
+{% include "partials/header_marketing.html" %}
+{% endblock %}
+
+{% block content %}
+<main class="w-full pt-20 bg-background min-h-screen">
+  <div class="flex flex-col w-full">
+    <!-- Hero Section -->
+    <section class="relative w-full overflow-hidden bg-surface-container-lowest py-space-3xl lg:py-[6rem]">
+      <div class="absolute -top-32 -left-32 w-96 h-96 rounded-full bg-primary/5 blur-[120px] pointer-events-none"></div>
+      <div class="absolute -bottom-24 -right-24 w-[30rem] h-[30rem] rounded-full bg-secondary/10 blur-[140px] pointer-events-none"></div>
+      <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop relative z-10">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl lg:gap-space-2xl items-center">
+          <!-- Content Column -->
+          <div class="lg:col-span-7 flex flex-col items-start space-y-space-md">
+            <!-- Badge -->
+            <div class="inline-flex items-center gap-space-xs px-space-sm py-space-2xs rounded-full bg-surface-container-high text-secondary">
+              <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+              <span class="font-label-sm text-label-sm uppercase tracking-widest text-primary">Santuario Masculino en Salamanca</span>
+            </div>
+            <!-- Hero Headline -->
+            <h1 class="font-headline-xl text-headline-xl text-on-surface tracking-tight">
+              El Arte Tradicional de la <span class="text-primary italic font-body-lg text-[1.1em] font-normal inline-block ml-1">Barbería Clásica</span>
+            </h1>
+            <!-- Hero Subtitle -->
+            <p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl">
+              Cuidado impecable, ritual de toalla caliente y maestría artesanal para el caballero contemporáneo. Una pausa sin prisas entre cuero envejecido, navajas de acero templado y elixires botánicos.
+            </p>
+            <!-- CTAs -->
+            <div class="flex flex-wrap items-center gap-space-md pt-space-xs">
+              <a class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-primary text-on-primary font-headline-sm text-headline-sm uppercase tracking-wider hover:bg-primary-fixed-dim transition-all shadow-[0_0_24px_rgba(229,193,88,0.3)]" data-path="reservar-cita" href="{{ url_for('reservas') }}">
+                <span>Reservar Cita Ahora</span>
+                <span class="material-symbols-outlined text-[20px]">calendar_month</span>
+              </a>
+              <a class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md uppercase tracking-wider hover:bg-surface-container-highest transition-colors" data-path="servicios-tarifas" href="{{ url_for('tarifas') }}">
+                <span>Ver Servicios &amp; Tarifas</span>
+                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+              </a>
+            </div>
+            <!-- Trust Badges & Indicators -->
+            <div class="pt-space-lg w-full flex flex-wrap items-center gap-space-lg">
+              <div class="flex items-center gap-space-xs">
+                <div class="flex text-primary">
+                  <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                  <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-headline-sm text-headline-sm leading-none text-on-surface">4.9 / 5</span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">+800 valoraciones verificadas</span>
+                </div>
+              </div>
+              <div class="h-8 w-px bg-surface-container-high hidden sm:block"></div>
+              <div class="flex items-center gap-space-xs">
+                <div class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-secondary">
+                  <span class="material-symbols-outlined text-[22px]">content_cut</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-headline-sm text-headline-sm leading-none text-on-surface">100%</span>
+                  <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Barberos Titulados &amp; Maestros</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Visual / Emblem Column -->
+          <div class="lg:col-span-5 relative flex justify-center items-center">
+            <div class="relative w-full max-w-[420px] aspect-square rounded-2xl bg-surface-container-low p-space-md shadow-2xl flex flex-col justify-between overflow-hidden">
+              <div class="absolute inset-0 bg-gradient-to-tr from-surface-container-lowest via-transparent to-primary/10 opacity-70"></div>
+              <img class="absolute inset-0 w-full h-full object-cover opacity-35 mix-blend-luminosity scale-105 transition-transform duration-700 hover:scale-100" data-alt="Close up dark atmospheric photograph of a vintage gold plated straight razor and classic barber shears crossed on a textured dark leather apron inside an upscale gentleman barbershop with warm candlelit reflections" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAZEhGvUFR6IKCvabWL2BfO5IV-tA4zs9AjZ7JQJddyila0A_FSaLT_t24YybvW8AmkBuK16rhwzOYdXrrTNjnxmKK-yECibT87AVpd5pJUbmKAYKtqFHoPoUHb_Pm5pZPZiyQN3rCHE_-vJjeduiuE4aNoEQgR19PsO2pka9hApYB43P4q9dF-BE8Ug8KWTWt4eFUp42JxgFvDr-xbkP9ONXYJAybewTCZVpSZLl11_2w51sRoPd80Xw" />
+              <!-- Embedded Emblem Badge Card -->
+              <div class="relative z-10 flex justify-between items-start">
+                <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary bg-surface-container-lowest/80 px-space-xs py-space-2xs rounded backdrop-blur-md">Est. MMXVI</span>
+                <div class="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[18px]">verified</span>
+                </div>
+              </div>
+              <!-- Central Floating Quote Card -->
+              <div class="relative z-10 bg-surface-container-high/90 backdrop-blur-md p-space-md rounded-xl shadow-lg -mt-4">
+                <p class="font-body-md text-body-md text-on-surface italic leading-snug">
+                  “La precisión no admite atajos. Cada pasada con navaja es un ritual consagrado a la excelencia individual.”
+                </p>
+                <div class="mt-space-xs flex items-center justify-between">
+                  <span class="font-label-sm text-label-sm uppercase text-secondary">Maestro Mateo Galván</span>
+                  <span class="font-label-sm text-label-sm text-outline">Navaja de Oro 2022</span>
+                </div>
+              </div>
+              <!-- Bottom Footnote Info -->
+              <div class="relative z-10 flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-space-xs">
+                <span>Salamanca, Madrid</span>
+                <span class="text-primary flex items-center gap-1 font-label-sm text-label-sm uppercase"><span class="w-2 h-2 rounded-full bg-primary animate-pulse inline-block"></span> Sala Activa Hoy</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Misión & Visión Section -->
+    <section class="w-full bg-surface-container py-space-2xl">
+      <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-space-lg">
+          <!-- Misión Card -->
+          <div class="relative p-space-xl rounded-xl bg-surface-container-low shadow-md overflow-hidden flex flex-col justify-between group hover:bg-surface-container-high transition-all">
+            <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-primary/5 group-hover:scale-125 transition-transform duration-500"></div>
+            <div class="flex items-center gap-space-sm mb-space-md">
+              <div class="w-12 h-12 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+                <span class="material-symbols-outlined text-[26px]">spa</span>
+              </div>
+              <div>
+                <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest block">Propósito Esencial</span>
+                <h2 class="font-headline-md text-headline-md text-on-surface">Nuestra Misión</h2>
+              </div>
+            </div>
+            <p class="font-body-lg text-body-lg text-on-surface-variant relative z-10 leading-relaxed">
+              Ofrecer una experiencia de bienestar, precisión y desconexión donde cada corte y afeitado sea un ritual artesanal único, devolviendo el valor a la pausa y a la pulcritud absoluta en un entorno diseñado exclusivamente para su comodidad.
+            </p>
+            <div class="mt-space-md pt-space-sm flex items-center gap-space-xs text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+              <span>Hospitalidad Secular</span>
+              <span class="material-symbols-outlined text-[16px]">arrow_right_alt</span>
+            </div>
+          </div>
+          <!-- Visión Card -->
+          <div class="relative p-space-xl rounded-xl bg-surface-container-low shadow-md overflow-hidden flex flex-col justify-between group hover:bg-surface-container-high transition-all">
+            <div class="absolute -right-6 -bottom-6 w-32 h-32 rounded-full bg-secondary/5 group-hover:scale-125 transition-transform duration-500"></div>
+            <div class="flex items-center gap-space-sm mb-space-md">
+              <div class="w-12 h-12 rounded-lg bg-surface-container-high text-secondary flex items-center justify-center">
+                <span class="material-symbols-outlined text-[26px]">all_inclusive</span>
+              </div>
+              <div>
+                <span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest block">Horizontes de Estilo</span>
+                <h2 class="font-headline-md text-headline-md text-on-surface">Nuestra Visión</h2>
+              </div>
+            </div>
+            <p class="font-body-lg text-body-lg text-on-surface-variant relative z-10 leading-relaxed">
+              Ser el templo de referencia del cuidado masculino, combinando técnicas tradicionales de barbería con las últimas tendencias estéticas y productos orgánicos de primera calidad, erigiendo una hermandad de caballeros distinguidos.
+            </p>
+            <div class="mt-space-md pt-space-sm flex items-center gap-space-xs text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+              <span>Evolución Clásica</span>
+              <span class="material-symbols-outlined text-[16px]">arrow_right_alt</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Historia & Esencia (Asymmetric editorial layout) -->
+    <section class="w-full bg-background py-space-3xl relative">
+      <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-xl lg:gap-space-2xl items-center">
+          <!-- Visual mosaic -->
+          <div class="lg:col-span-6 relative">
+            <div class="relative z-10 w-full h-[460px] rounded-xl overflow-hidden shadow-2xl bg-surface-container-low">
+              <img class="w-full h-full object-cover hover:scale-105 transition-transform duration-700" data-alt="Editorial cinematic photo of an experienced master barber in a leather apron applying hot lather with an authentic badger hair brush to a refined gentleman client in an antique dark wood and brass barbershop setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDSQoQh5J3vyigmEnxRtcbsiYFveLGqFNSrSOB8CgoBwPt7uh4l1d_qmeegDADdS9KwdhYuf81qK3AL26QKT7uuHeKofAKluZc0u_7ka22wRa1gC63H42vDyBbu72kew_I0abY_h2fk2BpGCGlFm8H7xC4L44z3gMqv4IWonw65Zxqm0t0eMseCP26YKcxAJQNeM2Nf3gIiPeS6CXQ33jOOesLdrdQmdIYGm3V1ai5uPJqLZ9wCx8j8cQ" />
+              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest/80 via-transparent to-transparent"></div>
+            </div>
+            <!-- Overlapping inset card -->
+            <div class="hidden sm:block absolute -bottom-8 -right-6 z-20 w-64 bg-surface-container-highest p-space-md rounded-lg shadow-2xl">
+              <div class="flex items-center gap-space-xs text-primary mb-space-2xs">
+                <span class="material-symbols-outlined text-[20px]">local_cafe</span>
+                <span class="font-label-sm text-label-sm uppercase tracking-wider">Cortesía del Club</span>
+              </div>
+              <p class="font-body-sm text-body-sm text-on-surface-variant">Whisky escocés de malta única o café de tueste natural con cada sesión.</p>
+            </div>
+          </div>
+          <!-- Story narrative -->
+          <div class="lg:col-span-6 flex flex-col space-y-space-md">
+            <div class="inline-flex items-center gap-space-xs">
+              <span class="w-8 h-px bg-secondary"></span>
+              <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Herencia &amp; Filosofía</span>
+            </div>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface">
+              Nuestra Historia &amp; Esencia
+            </h2>
+            <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              NutriaSyle nació como una respuesta reflexiva al ritmo apresurado de la vida moderna. Inspirados en los clubes privados londinenses y los talleres de afeitado de la España de principios del siglo XX, recuperamos la liturgia pausada de la navaja libre, los paños aromatizados con eucalipto y las fórmulas cosméticas botánicas sin sulfatos ni parabenos.
+            </p>
+            <p class="font-body-md text-body-md text-on-surface-variant leading-relaxed">
+              En nuestro salón no despachamos cortes de cabello en serie; dialogamos, estudiamos la fisonomía craneofacial de cada cliente y esculpimos con tijeras forjadas a mano en Japón una silueta que exuda pulcritud, aplomo y distinción natural.
+            </p>
+            <!-- Metric Highlights -->
+            <div class="grid grid-cols-3 gap-space-md pt-space-sm">
+              <div class="bg-surface-container p-space-sm rounded-lg flex flex-col items-center text-center">
+                <span class="font-headline-md text-headline-md text-primary">8+</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant uppercase mt-space-2xs">Años de Linaje</span>
+              </div>
+              <div class="bg-surface-container p-space-sm rounded-lg flex flex-col items-center text-center">
+                <span class="font-headline-md text-headline-md text-primary">15k</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant uppercase mt-space-2xs">Rituales Completados</span>
+              </div>
+              <div class="bg-surface-container p-space-sm rounded-lg flex flex-col items-center text-center">
+                <span class="font-headline-md text-headline-md text-primary">100%</span>
+                <span class="font-label-sm text-label-sm text-on-surface-variant uppercase mt-space-2xs">Óleos Orgánicos</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Servicios Destacados -->
+    <section class="w-full bg-surface-container-lowest py-space-3xl">
+      <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-2xl">
+          <div class="space-y-space-2xs">
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Carta Exclusiva</span>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface">Servicios Destacados</h2>
+            <p class="font-body-md text-body-md text-on-surface-variant max-w-xl">Tratamientos meticulosos concebidos bajo los más estrictos estándares de la barbería clásica.</p>
+          </div>
+          <a class="inline-flex items-center gap-space-xs text-primary hover:text-primary-fixed font-label-md text-label-md uppercase tracking-wider" data-path="servicios-tarifas" href="{{ url_for('tarifas') }}">
+            <span>Explorar Carta Completa</span>
+            <span class="material-symbols-outlined text-[18px]">east</span>
+          </a>
+        </div>
+        <!-- 3 Service Cards Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+          <!-- Service Card 1 -->
+          <div class="relative bg-surface-container-low rounded-xl p-space-lg flex flex-col justify-between shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+            <div class="space-y-space-sm">
+              <div class="flex items-center justify-between">
+                <span class="w-10 h-10 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[22px]">content_cut</span>
+                </span>
+                <span class="font-headline-md text-headline-md text-primary">32€</span>
+              </div>
+              <div class="space-y-space-2xs">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">
+                  Corte Tradicional &amp; Lavado
+                </h3>
+                <div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span>
+                  <span>45 Minutos</span>
+                </div>
+              </div>
+              <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Diagnóstico morfológico personalizado, corte con tijera japonesa o máquina artesanal, lavado con champú clarificante purificante, masaje capilar relajante y fijación mate con pomada de cera de abejas.
+              </p>
+            </div>
+            <div class="pt-space-lg mt-space-md">
+              <a class="w-full inline-flex items-center justify-center py-space-xs rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm uppercase tracking-wider hover:bg-primary hover:text-on-primary transition-all" data-path="reservar-cita" href="{{ url_for('reservas') }}">
+                Agendar este Servicio
+              </a>
+            </div>
+          </div>
+          <!-- Service Card 2 (Featured) -->
+          <div class="relative bg-surface-container rounded-xl p-space-lg flex flex-col justify-between shadow-xl hover:-translate-y-1 transition-all duration-300 group">
+            <div class="absolute -top-3 right-6 bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-widest px-space-xs py-1 rounded shadow-sm">
+              Distinción NutriaSyle
+            </div>
+            <div class="space-y-space-sm">
+              <div class="flex items-center justify-between">
+                <span class="w-10 h-10 rounded-lg bg-surface-container-highest text-secondary flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[22px]">water_drop</span>
+                </span>
+                <span class="font-headline-md text-headline-md text-primary">28€</span>
+              </div>
+              <div class="space-y-space-2xs">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">
+                  Afeitado Clásico a Navaja
+                </h3>
+                <div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span>
+                  <span>40 Minutos</span>
+                </div>
+              </div>
+              <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                Preparación con bálsamo pre-shave de romero y cedro, doble aplicación de toallas calientes al vapor, enjabonado con brocha de tejón silver-tip, rasurado al milímetro con navaja esterilizada y tónico astringente frío.
+              </p>
+            </div>
+            <div class="pt-space-lg mt-space-md">
+              <a class="w-full inline-flex items-center justify-center py-space-xs rounded-lg bg-primary text-on-primary font-label-sm text-label-sm uppercase tracking-wider hover:bg-primary-fixed-dim transition-all shadow-[0_0_16px_rgba(229,193,88,0.25)]" data-path="reservar-cita" href="{{ url_for('reservas') }}">
+                Agendar este Servicio
+              </a>
+            </div>
+          </div>
+          <!-- Service Card 3 -->
+          <div class="relative bg-surface-container-low rounded-xl p-space-lg flex flex-col justify-between shadow-lg hover:-translate-y-1 transition-all duration-300 group">
+            <div class="space-y-space-sm">
+              <div class="flex items-center justify-between">
+                <span class="w-10 h-10 rounded-lg bg-surface-container-high text-primary flex items-center justify-center">
+                  <span class="material-symbols-outlined text-[22px]">hotel_class</span>
+                </span>
+                <span class="font-headline-md text-headline-md text-primary">65€</span>
+              </div>
+              <div class="space-y-space-2xs">
+                <h3 class="font-headline-sm text-headline-sm text-on-surface group-hover:text-primary transition-colors">
+                  Ritual Completo NutriaSyle
+                </h3>
+                <div class="flex items-center gap-space-xs text-secondary font-label-sm text-label-sm uppercase tracking-wider">
+                  <span class="material-symbols-outlined text-[16px]">schedule</span>
+                  <span>80 Minutos</span>
+                </div>
+              </div>
+              <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+                La experiencia integral definitiva: corte de autor + diseño y perfilado de barba con toalla caliente + exfoliación dérmica facial con carbón activado, mascarilla hidratante antifatiga y degustación de destilados de cortesía.
+              </p>
+            </div>
+            <div class="pt-space-lg mt-space-md">
+              <a class="w-full inline-flex items-center justify-center py-space-xs rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm uppercase tracking-wider hover:bg-primary hover:text-on-primary transition-all" data-path="reservar-cita" href="{{ url_for('reservas') }}">
+                Agendar este Servicio
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- Testimonios & Reseñas -->
+    <section class="w-full bg-surface-container py-space-3xl relative overflow-hidden">
+      <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="text-center max-w-2xl mx-auto mb-space-2xl space-y-space-2xs">
+          <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Opiniones Auténticas</span>
+          <h2 class="font-headline-lg text-headline-lg text-on-surface">La Experiencia del Club por Nuestros Socios</h2>
+          <p class="font-body-md text-body-md text-on-surface-variant">Voces de quienes confían periódicamente su imagen personal a nuestras manos.</p>
+        </div>
+        <!-- Testimonial Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-space-lg">
+          <!-- Review 1 -->
+          <div class="bg-surface-container-low p-space-xl rounded-xl shadow-md flex flex-col justify-between">
+            <div class="space-y-space-sm">
+              <div class="flex text-primary">
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              </div>
+              <p class="font-body-md text-body-md text-on-surface italic leading-relaxed">
+                “El afeitado con toalla caliente y navaja es de otro planeta. Jamás había experimentado un trato tan refinado y sin prisas en pleno centro de Madrid. Se ha convertido en mi templo quincenal.”
+              </p>
+            </div>
+            <div class="flex items-center gap-space-sm pt-space-lg mt-space-md">
+              <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-headline-sm text-headline-sm text-primary">
+                AR
+              </div>
+              <div class="flex flex-col">
+                <span class="font-headline-sm text-headline-sm text-on-surface">Alejandro Ruiz</span>
+                <span class="font-label-sm text-label-sm text-outline">Cliente Habitual • Hace 4 días</span>
+              </div>
+            </div>
+          </div>
+          <!-- Review 2 -->
+          <div class="bg-surface-container-low p-space-xl rounded-xl shadow-md flex flex-col justify-between">
+            <div class="space-y-space-sm">
+              <div class="flex text-primary">
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              </div>
+              <p class="font-body-md text-body-md text-on-surface italic leading-relaxed">
+                “El Ritual Completo NutriaSyle es el mejor regalo que me han hecho. Salí completamente renovado de la sesión de spa facial y con un degradado en la barba impecable. Maestría técnica indudable.”
+              </p>
+            </div>
+            <div class="flex items-center gap-space-sm pt-space-lg mt-space-md">
+              <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-headline-sm text-headline-sm text-primary">
+                FB
+              </div>
+              <div class="flex flex-col">
+                <span class="font-headline-sm text-headline-sm text-on-surface">Fernando Benítez</span>
+                <span class="font-label-sm text-label-sm text-outline">Socio Club • Hace 1 semana</span>
+              </div>
+            </div>
+          </div>
+          <!-- Review 3 -->
+          <div class="bg-surface-container-low p-space-xl rounded-xl shadow-md flex flex-col justify-between">
+            <div class="space-y-space-sm">
+              <div class="flex text-primary">
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+                <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+              </div>
+              <p class="font-body-md text-body-md text-on-surface italic leading-relaxed">
+                “Puntualidad británica, ambiente exquisito con música de jazz clásica de fondo y productos de altísima gama. No existe otra barbería en la ciudad con este estándar de pulcritud.”
+              </p>
+            </div>
+            <div class="flex items-center gap-space-sm pt-space-lg mt-space-md">
+              <div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center font-headline-sm text-headline-sm text-primary">
+                GV
+              </div>
+              <div class="flex flex-col">
+                <span class="font-headline-sm text-headline-sm text-on-surface">Guillermo Valdés</span>
+                <span class="font-label-sm text-label-sm text-outline">Empresario • Hace 2 semanas</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <!-- CTA Banner Final para Agendar Cita -->
+    <section class="w-full bg-background py-space-3xl relative">
+      <div class="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+        <div class="relative rounded-2xl bg-gradient-to-r from-surface-container-lowest via-surface-container-low to-surface-container p-space-xl md:p-space-3xl overflow-hidden shadow-2xl">
+          <div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-primary/10 blur-[90px] pointer-events-none"></div>
+          <div class="relative z-10 max-w-2xl space-y-space-md">
+            <span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary flex items-center gap-2">
+              <span class="w-2 h-2 rounded-full bg-primary"></span>
+              Agenda Abierta para Esta Semana
+            </span>
+            <h2 class="font-headline-xl text-headline-xl text-on-surface">
+              Reclame su Momento de <span class="text-primary italic font-body-lg text-[1.1em] font-normal">Pausa &amp; Maestría</span>
+            </h2>
+            <p class="font-body-lg text-body-lg text-on-surface-variant">
+              Elija a su maestro barbero de confianza, seleccione el ritual que su jornada merece y reserve su asiento con confirmación instantánea.
+            </p>
+            <div class="pt-space-sm flex flex-wrap items-center gap-space-md">
+              <a class="inline-flex items-center gap-space-xs px-space-xl py-space-sm rounded-lg bg-primary text-on-primary font-headline-sm text-headline-sm uppercase tracking-wider hover:bg-primary-fixed-dim transition-all shadow-[0_0_20px_rgba(229,193,88,0.3)]" data-path="reservar-cita" href="{{ url_for('reservas') }}">
+                <span>Agendar Cita en Línea</span>
+                <span class="material-symbols-outlined text-[20px]">calendar_today</span>
+              </a>
+              {% set config = get_configuracion() %}
+              {% if config.telefono_whatsapp %}
+              <a class="inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-surface-container-high text-on-surface font-label-md text-label-md uppercase tracking-wider hover:bg-surface-container-highest transition-colors" href="https://wa.me/{{ config.telefono_whatsapp }}" target="_blank">
+                <span class="material-symbols-outlined text-[18px]">call</span>
+                <span>{{ config.telefono_whatsapp }}</span>
+              </a>
+              {% endif %}
+            </div>
+            <div class="pt-space-xs flex items-center gap-space-md text-outline font-body-sm text-body-sm">
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-secondary">check</span> Cancelación flexible</span>
+              <span class="flex items-center gap-1"><span class="material-symbols-outlined text-[16px] text-secondary">check</span> Parking concertado</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>{% endblock %}
