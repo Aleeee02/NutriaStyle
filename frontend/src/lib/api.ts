@@ -1,4 +1,6 @@
-const API_BASE = "/api";
+import { BACKEND_ORIGIN } from "./config";
+
+const API_BASE = `${BACKEND_ORIGIN}/api`;
 
 export class ApiError extends Error {
   status: number;

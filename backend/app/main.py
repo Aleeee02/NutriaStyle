@@ -1,9 +1,10 @@
+import os
 import urllib.parse
 from datetime import date
-from pathlib import Path
 
 from fastapi import Depends, FastAPI, HTTPException, Request
-from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse, RedirectResponse, Response
 
 from app.admin import router as admin_router
 from app.auth import (
@@ -20,11 +21,21 @@ from app.profiles import ensure_user_profile
 from app.schemas import LoginBody, RegistroBody, ReservaCreateBody, SessionBody
 from app.supabase_client import SUPABASE_URL, get_supabase, get_supabase_admin
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-FRONTEND_DIR = BASE_DIR.parent / "frontend"
-DIST_DIR = FRONTEND_DIR / "dist"
+# URL del frontend (React en Vercel). En local, el proxy de Vite hace que
+# todo sea "same-origin" y esto no se usa para las llamadas normales, pero
+# sigue haciendo falta para saber a donde mandar de vuelta el login de Google.
+FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173")
+_CROSS_ORIGIN_HTTPS = FRONTEND_ORIGIN.startswith("https://")
 
 app = FastAPI(title="NutriaSyle API")
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[FRONTEND_ORIGIN],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(admin_router)
 
@@ -36,7 +47,11 @@ def _set_session_cookie(response: Response, access_token: str) -> None:
         SESSION_COOKIE,
         access_token,
         httponly=True,
-        samesite="lax",
+        # Frontend y backend viven en dominios distintos (Vercel / Render),
+        # asi que la cookie necesita SameSite=None + Secure para viajar en
+        # las peticiones fetch entre ambos. En local (http) se usa Lax.
+        samesite="none" if _CROSS_ORIGIN_HTTPS else "lax",
+        secure=_CROSS_ORIGIN_HTTPS,
         max_age=SESSION_MAX_AGE,
     )
 
@@ -125,13 +140,17 @@ def api_registro(body: RegistroBody):
 @app.post("/api/auth/logout")
 def api_logout():
     response = JSONResponse({"ok": True})
-    response.delete_cookie(SESSION_COOKIE)
+    response.delete_cookie(
+        SESSION_COOKIE,
+        samesite="none" if _CROSS_ORIGIN_HTTPS else "lax",
+        secure=_CROSS_ORIGIN_HTTPS,
+    )
     return response
 
 
 @app.get("/login/google")
-def login_google(request: Request):
-    redirect_to = str(request.base_url).rstrip("/") + "/auth/callback"
+def login_google():
+    redirect_to = f"{FRONTEND_ORIGIN}/auth/callback"
     params = urllib.parse.urlencode({"provider": "google", "redirect_to": redirect_to})
     return RedirectResponse(url=f"{SUPABASE_URL}/auth/v1/authorize?{params}")
 
@@ -226,13 +245,6 @@ def api_reservas_crear(body: ReservaCreateBody, user=Depends(require_login)):
     return fila[0]
 
 
-# ---------- SPA (build de React) ----------
-
-if DIST_DIR.exists():
-
-    @app.get("/{full_path:path}")
-    def spa_catch_all(full_path: str):
-        candidate = DIST_DIR / full_path
-        if full_path and candidate.is_file():
-            return FileResponse(candidate)
-        return FileResponse(DIST_DIR / "index.html")
+@app.get("/")
+def health_check():
+    return {"status": "ok", "service": "NutriaSyle API"}
