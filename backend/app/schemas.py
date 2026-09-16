@@ -18,6 +18,12 @@ class SessionBody(BaseModel):
     access_token: str
 
 
+class PerfilBody(BaseModel):
+    nombre: str
+    apellido: str
+    telefono: str
+
+
 class ReservaCreateBody(BaseModel):
     servicio_id: str
     empleado_id: str

@@ -18,7 +18,7 @@ from app.configuracion import get_configuracion
 from app.constants import SELLOS_META
 from app.disponibilidad import calcular_slots_disponibles, hora_fin_desde_inicio
 from app.profiles import ensure_user_profile
-from app.schemas import LoginBody, RegistroBody, ReservaCreateBody, SessionBody
+from app.schemas import LoginBody, PerfilBody, RegistroBody, ReservaCreateBody, SessionBody
 from app.supabase_client import SUPABASE_URL, get_supabase, get_supabase_admin
 
 # URL del frontend (React en Vercel). En local, el proxy de Vite hace que
@@ -152,6 +152,25 @@ def api_registro(body: RegistroBody):
         return response
 
     return {"pending_confirmation": True}
+
+
+@app.put("/api/auth/perfil")
+def api_auth_perfil(body: PerfilBody, user=Depends(require_login)):
+    nombre = body.nombre.strip()
+    apellido = body.apellido.strip()
+    telefono = body.telefono.strip()
+    digitos = "".join(c for c in telefono if c.isdigit())
+
+    if not nombre or not apellido:
+        raise HTTPException(status_code=400, detail="Nombre y apellido son obligatorios.")
+    if not 7 <= len(digitos) <= 15 or any(c not in "0123456789+ -()" for c in telefono):
+        raise HTTPException(status_code=400, detail="Escribe un teléfono válido (solo números, puede empezar con +).")
+
+    get_supabase_admin().table("usuarios").update(
+        {"nombre": nombre, "apellido": apellido, "telefono": telefono}
+    ).eq("id", user.id).execute()
+
+    return {**serialize_user(user), "is_admin": is_admin_user(user)}
 
 
 @app.post("/api/auth/logout")

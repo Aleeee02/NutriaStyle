@@ -3,6 +3,10 @@ export interface CurrentUser {
   email: string;
   user_metadata: Record<string, unknown>;
   display_name: string;
+  nombre: string;
+  apellido: string;
+  telefono: string;
+  perfil_completo: boolean;
   is_admin: boolean;
 }
 

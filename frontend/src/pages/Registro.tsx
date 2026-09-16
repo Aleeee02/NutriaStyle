@@ -72,16 +72,20 @@ export default function Registro() {
               <input
                 className="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary"
                 id="apellido"
+                required
                 value={form.apellido}
                 onChange={update("apellido")}
               />
             </div>
           </div>
           <div className="flex flex-col gap-space-2xs">
-            <label className="font-label-sm text-label-sm uppercase tracking-wider text-secondary" htmlFor="telefono">Teléfono (opcional)</label>
+            <label className="font-label-sm text-label-sm uppercase tracking-wider text-secondary" htmlFor="telefono">Teléfono</label>
             <input
               className="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary"
               id="telefono"
+              required
+              inputMode="tel"
+              placeholder="+51 999 999 999"
               type="tel"
               value={form.telefono}
               onChange={update("telefono")}

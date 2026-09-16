@@ -9,6 +9,7 @@ import Tarifas from "./pages/Tarifas";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import AuthCallback from "./pages/AuthCallback";
+import CompletarPerfil from "./pages/CompletarPerfil";
 import Reservas from "./pages/Reservas";
 import Fidelizacion from "./pages/Fidelizacion";
 
@@ -31,6 +32,16 @@ export default function App() {
       <Route path="/login" element={<Layout><Login /></Layout>} />
       <Route path="/registro" element={<Layout><Registro /></Layout>} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route
+        path="/completar-perfil"
+        element={
+          <RequireAuth>
+            <Layout>
+              <CompletarPerfil />
+            </Layout>
+          </RequireAuth>
+        }
+      />
       <Route
         path="/reservas"
         element={

@@ -33,21 +33,27 @@ def is_admin_user(user) -> bool:
     return bool(user and get_user_role(user.id) == "admin")
 
 
-def get_display_name(user) -> str:
-    metadata = user.user_metadata or {}
-    nombre = metadata.get("nombre")
-    apellido = metadata.get("apellido")
-    if nombre:
-        return f"{nombre} {apellido}".strip() if apellido else nombre
-    return user.email
-
-
 def serialize_user(user) -> dict:
+    """Datos del usuario para el frontend. El perfil sale de la tabla usuarios
+    (fuente de verdad y editable), no de user_metadata de Auth."""
+    from app.supabase_client import get_supabase_admin
+
+    rows = (
+        get_supabase_admin().table("usuarios").select("nombre, apellido, telefono").eq("id", user.id).execute().data
+    )
+    perfil = rows[0] if rows else {}
+    nombre = perfil.get("nombre") or ""
+    apellido = perfil.get("apellido") or ""
+
     return {
         "id": user.id,
         "email": user.email,
         "user_metadata": user.user_metadata or {},
-        "display_name": get_display_name(user),
+        "display_name": f"{nombre} {apellido}".strip() or user.email,
+        "nombre": nombre,
+        "apellido": apellido,
+        "telefono": perfil.get("telefono") or "",
+        "perfil_completo": bool(nombre and apellido and perfil.get("telefono")),
     }
 
 

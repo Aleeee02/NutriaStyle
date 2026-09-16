@@ -22,7 +22,11 @@ export default function AuthCallback() {
       .post<CurrentUser>("/auth/session", { access_token: accessToken })
       .then((user) => {
         setUser(user);
-        navigate("/fidelizacion", { replace: true });
+        if (!user.perfil_completo) {
+          navigate("/completar-perfil", { replace: true });
+        } else {
+          navigate(user.is_admin ? "/admin" : "/fidelizacion", { replace: true });
+        }
       })
       .catch((err) => {
         console.error(err instanceof ApiError ? err.message : err);
