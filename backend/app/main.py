@@ -24,14 +24,31 @@ from app.supabase_client import SUPABASE_URL, get_supabase, get_supabase_admin
 # URL del frontend (React en Vercel). En local, el proxy de Vite hace que
 # todo sea "same-origin" y esto no se usa para las llamadas normales, pero
 # sigue haciendo falta para saber a donde mandar de vuelta el login de Google.
-FRONTEND_ORIGIN = os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173")
+#
+# Se admite una lista separada por comas y se limpia la barra final: el header
+# "Origin" del navegador nunca la lleva, asi que un valor como
+# "https://mi-app.vercel.app/" jamas haria match y romperia todo el CORS.
+def _parse_origins(raw: str) -> list[str]:
+    return [o.strip().rstrip("/") for o in raw.split(",") if o.strip()]
+
+
+_ORIGINS = _parse_origins(os.environ.get("FRONTEND_ORIGIN", "http://localhost:5173"))
+
+# Origen principal: a donde se vuelve tras el login de Google.
+FRONTEND_ORIGIN = _ORIGINS[0] if _ORIGINS else "http://localhost:5173"
 _CROSS_ORIGIN_HTTPS = FRONTEND_ORIGIN.startswith("https://")
+
+# Los deploys de preview de Vercel usan subdominios generados
+# (nutria-style-git-rama-usuario.vercel.app). Se aceptan tambien para no tener
+# que registrar cada uno a mano, junto con localhost para desarrollo.
+CORS_ORIGIN_REGEX = r"https://nutria-?style[a-z0-9\-]*\.vercel\.app|http://localhost:\d+"
 
 app = FastAPI(title="NutriaSyle API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[FRONTEND_ORIGIN],
+    allow_origins=_ORIGINS,
+    allow_origin_regex=CORS_ORIGIN_REGEX,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -247,4 +264,11 @@ def api_reservas_crear(body: ReservaCreateBody, user=Depends(require_login)):
 
 @app.get("/")
 def health_check():
-    return {"status": "ok", "service": "NutriaSyle API"}
+    # Se incluyen los origenes permitidos para poder diagnosticar problemas de
+    # CORS en produccion sin tener que entrar al panel de Render. Son URLs
+    # publicas, no hay nada sensible aqui.
+    return {
+        "status": "ok",
+        "service": "NutriaSyle API",
+        "cors_origins": _ORIGINS,
+    }
