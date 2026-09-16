@@ -38,7 +38,7 @@ export const COMBOS: Combo[] = [
 const SERVICIOS_CON_DESCUENTO_FFAA = ["Corte Clásico", "Corte con Diseño"];
 
 function normalizar(texto: string): string {
-  return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toLowerCase();
+  return texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").trim().toLowerCase();
 }
 
 /** ¿El 20% de FF.AA./PNP aplica a este servicio? (combos, barba, cejas: no) */
