@@ -4,11 +4,14 @@ import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../lib/api";
-import type { FidelizacionData } from "../lib/types";
+import { urlComoLlegar } from "../lib/mapa";
+import type { Configuracion, FidelizacionData } from "../lib/types";
 
 export default function Fidelizacion() {
   const { user } = useAuth();
   const [modalAbierto, setModalAbierto] = useState(false);
+  const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
+  const comoLlegar = urlComoLlegar(config);
   const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ["fidelizacion", "me"],
@@ -195,6 +198,11 @@ export default function Fidelizacion() {
                     )}
                   </p>
                   <span className="font-label-sm text-[11px] uppercase tracking-wider text-primary mt-1">{data.proxima_cita.estado}</span>
+                  {comoLlegar && (
+                    <a className="mt-space-xs inline-flex items-center gap-1 font-label-sm text-label-sm uppercase tracking-wider text-secondary hover:text-primary" href={comoLlegar} target="_blank" rel="noreferrer">
+                      <span className="material-symbols-outlined text-[18px]">directions</span>Cómo llegar
+                    </a>
+                  )}
                 </div>
               </div>
             ) : (

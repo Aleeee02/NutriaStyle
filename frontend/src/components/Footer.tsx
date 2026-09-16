@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
+import { urlComoLlegar } from "../lib/mapa";
 import type { Configuracion } from "../lib/types";
 
 export function Footer() {
@@ -10,6 +11,7 @@ export function Footer() {
   });
 
   const nombre = config?.nombre_barberia ?? "Nutria Style";
+  const comoLlegar = urlComoLlegar(config);
 
   return (
     <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/30">
@@ -46,7 +48,13 @@ export function Footer() {
             <div className="flex flex-col gap-space-xs text-on-surface-variant font-body-sm text-body-sm">
               <div className="flex items-start gap-space-xs">
                 <span className="material-symbols-outlined text-secondary text-[20px] shrink-0">pin_drop</span>
-                <span>{config?.direccion || "Dirección por confirmar"}</span>
+                {comoLlegar ? (
+                  <a className="hover:text-primary transition-colors underline-offset-2 hover:underline" href={comoLlegar} target="_blank" rel="noreferrer">
+                    {config?.direccion}
+                  </a>
+                ) : (
+                  <span>Dirección por confirmar</span>
+                )}
               </div>
               {config?.telefono_whatsapp && (
                 <div className="flex items-center gap-space-xs">

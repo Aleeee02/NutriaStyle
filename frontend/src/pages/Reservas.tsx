@@ -1,7 +1,8 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { api, ApiError } from "../lib/api";
-import type { Categoria, Empleado, Servicio } from "../lib/types";
+import type { Configuracion, Categoria, Empleado, Servicio } from "../lib/types";
+import { urlComoLlegar } from "../lib/mapa";
 
 const STEP_LABELS = ["Servicio", "Maestro", "Fecha y Hora", "Confirmación"];
 
@@ -10,6 +11,8 @@ export default function Reservas() {
   const { data: categorias } = useQuery({ queryKey: ["categorias"], queryFn: () => api.get<Categoria[]>("/categorias") });
   const { data: servicios } = useQuery({ queryKey: ["servicios"], queryFn: () => api.get<Servicio[]>("/servicios") });
   const { data: empleados } = useQuery({ queryKey: ["empleados"], queryFn: () => api.get<Empleado[]>("/empleados") });
+  const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
+  const comoLlegar = urlComoLlegar(config);
 
   const [step, setStep] = useState(1);
   const [categoriaFiltro, setCategoriaFiltro] = useState<string>("all");
@@ -85,6 +88,11 @@ export default function Reservas() {
         {confirmada && (
           <div className="bg-secondary-container/40 border border-secondary/40 text-secondary p-space-md rounded-xl font-body-md text-body-md">
             ¡Reserva registrada con éxito! Queda en estado <strong>pendiente</strong> hasta que el salón la confirme.
+            {comoLlegar && (
+              <a className="ml-space-xs inline-flex items-center gap-1 font-medium text-primary hover:underline" href={comoLlegar} target="_blank" rel="noreferrer">
+                <span className="material-symbols-outlined text-[18px]">directions</span>Cómo llegar
+              </a>
+            )}
           </div>
         )}
         {error && (

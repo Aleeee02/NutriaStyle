@@ -1,12 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
+import { urlComoLlegar, urlMapaEmbebido } from "../lib/mapa";
 import type { Configuracion } from "../lib/types";
 
 const FILL = { fontVariationSettings: "'FILL' 1" };
 
 export default function Home() {
   const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
+  const comoLlegar = urlComoLlegar(config);
+  const mapa = urlMapaEmbebido(config);
 
   return (
     <main className="w-full pt-20 bg-background min-h-screen">
@@ -23,7 +26,7 @@ export default function Home() {
                     workspace_premium
                   </span>
                   <span className="font-label-sm text-label-sm uppercase tracking-widest text-primary">
-                    Santuario Masculino en Salamanca
+                    Santuario Masculino en Iquitos
                   </span>
                 </div>
                 <h1 className="font-headline-xl text-headline-xl text-on-surface tracking-tight">
@@ -104,7 +107,7 @@ export default function Home() {
                     </div>
                   </div>
                   <div className="relative z-10 flex items-center justify-between text-on-surface-variant font-body-sm text-body-sm pt-space-xs">
-                    <span>Salamanca, Madrid</span>
+                    <span>Iquitos, Perú</span>
                     <span className="text-primary flex items-center gap-1 font-label-sm text-label-sm uppercase">
                       <span className="w-2 h-2 rounded-full bg-primary animate-pulse inline-block" /> Sala Activa Hoy
                     </span>
@@ -158,6 +161,50 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Ubicacion */}
+        {mapa && (
+          <section className="w-full bg-background pt-space-3xl" id="ubicacion">
+            <div className="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop">
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-stretch">
+                <div className="lg:col-span-4 flex flex-col justify-center gap-space-md">
+                  <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Visítanos</span>
+                  <h2 className="font-headline-lg text-headline-lg text-on-surface">Dónde Encontrarnos</h2>
+                  <div className="flex items-start gap-space-xs text-on-surface-variant font-body-md text-body-md">
+                    <span className="material-symbols-outlined text-primary text-[22px] shrink-0">pin_drop</span>
+                    <span>{config?.direccion}</span>
+                  </div>
+                  {config?.horario && (
+                    <div className="flex items-start gap-space-xs text-on-surface-variant font-body-md text-body-md">
+                      <span className="material-symbols-outlined text-primary text-[22px] shrink-0">schedule</span>
+                      <span>{config.horario}</span>
+                    </div>
+                  )}
+                  {comoLlegar && (
+                    <a
+                      className="self-start inline-flex items-center gap-space-xs px-space-lg py-space-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors"
+                      href={comoLlegar}
+                      target="_blank"
+                      rel="noreferrer"
+                    >
+                      <span className="material-symbols-outlined text-[18px]">directions</span>
+                      Cómo Llegar
+                    </a>
+                  )}
+                </div>
+                <div className="lg:col-span-8 rounded-xl overflow-hidden shadow-2xl bg-surface-container min-h-[320px]">
+                  <iframe
+                    className="w-full h-full min-h-[320px] border-0"
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    src={mapa}
+                    title={`Mapa de ubicación de ${config?.nombre_barberia ?? "la barbería"}`}
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+        )}
 
         {/* CTA Final */}
         <section className="w-full bg-background py-space-3xl relative">
