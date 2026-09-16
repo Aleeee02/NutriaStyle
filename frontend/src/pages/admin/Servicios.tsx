@@ -1,6 +1,7 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
+import { soles } from "../../lib/moneda";
 import type { Servicio } from "../../lib/types";
 
 export default function AdminServicios() {
@@ -47,7 +48,7 @@ export default function AdminServicios() {
                 <tr key={s.id} className="border-t border-outline-variant/20">
                   <td className="py-space-sm px-space-md text-on-surface font-medium">{s.nombre}</td>
                   <td className="py-space-sm px-space-md text-on-surface-variant">{s.categorias_servicio?.nombre ?? "-"}</td>
-                  <td className="py-space-sm px-space-md text-secondary">{s.precio.toFixed(2)} €</td>
+                  <td className="py-space-sm px-space-md text-secondary">{soles(s.precio)}</td>
                   <td className="py-space-sm px-space-md text-on-surface-variant">{s.duracion_minutos} min</td>
                   <td className="py-space-sm px-space-md">
                     {s.activo ? (

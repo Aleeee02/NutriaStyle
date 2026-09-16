@@ -73,10 +73,10 @@ export default function Promociones() {
                 <p className="relative font-body-sm text-body-sm text-outline">Mismo precio para todos. No se aplican descuentos sobre el combo.</p>
                 <Link
                   className="relative mt-auto inline-flex items-center justify-center gap-space-xs py-space-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors"
-                  to="/reservas"
+                  to={`/reservas?servicio=${encodeURIComponent(combo.nombre)}`}
                 >
                   <span className="material-symbols-outlined text-[18px]">calendar_today</span>
-                  Reservar
+                  Reservar {combo.nombre}
                 </Link>
               </article>
             ))}

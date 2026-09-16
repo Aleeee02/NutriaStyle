@@ -113,7 +113,7 @@ export default function AdminServicioForm() {
 
         <div className="grid grid-cols-2 gap-space-sm">
           <div className="flex flex-col gap-space-2xs">
-            <label className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Precio (€)</label>
+            <label className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Precio (S/)</label>
             <input
               className="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary"
               type="number"

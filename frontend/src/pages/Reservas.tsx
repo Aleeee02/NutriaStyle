@@ -1,8 +1,11 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import { api, ApiError } from "../lib/api";
 import type { Configuracion, Categoria, Empleado, Servicio } from "../lib/types";
 import { urlComoLlegar } from "../lib/mapa";
+import { soles } from "../lib/moneda";
+import { DESCUENTO_FFAA_PNP } from "../lib/promociones";
 
 const STEP_LABELS = ["Servicio", "Maestro", "Fecha y Hora", "Confirmación"];
 
@@ -26,6 +29,33 @@ export default function Reservas() {
   const [confirmada, setConfirmada] = useState(false);
 
   const servicio = useMemo(() => servicios?.find((s) => s.id === servicioId) ?? null, [servicios, servicioId]);
+  const categoriaCombos = useMemo(
+    () => categorias?.find((c) => c.nombre.trim().toLowerCase() === "combos") ?? null,
+    [categorias]
+  );
+  const esCombo = (s: Servicio | null) => Boolean(s && categoriaCombos && s.categoria_id === categoriaCombos.id);
+
+  // Desde /promociones se llega con ?servicio=Combo 1 (o ?categoria=Combos):
+  // se deja el combo ya elegido para no tener que buscarlo.
+  const [searchParams] = useSearchParams();
+  const [preseleccionAplicada, setPreseleccionAplicada] = useState(false);
+  useEffect(() => {
+    if (preseleccionAplicada || !servicios || !categorias) return;
+    const normalizar = (t: string) => t.trim().toLowerCase();
+    const pedidoServicio = searchParams.get("servicio");
+    const pedidaCategoria = searchParams.get("categoria");
+    const encontrado = pedidoServicio
+      ? servicios.find((s) => normalizar(s.nombre).startsWith(normalizar(pedidoServicio)))
+      : undefined;
+    if (encontrado) {
+      setServicioId(encontrado.id);
+      setCategoriaFiltro(encontrado.categoria_id);
+    } else if (pedidaCategoria) {
+      const cat = categorias.find((c) => normalizar(c.nombre) === normalizar(pedidaCategoria));
+      if (cat) setCategoriaFiltro(cat.id);
+    }
+    setPreseleccionAplicada(true);
+  }, [servicios, categorias, searchParams, preseleccionAplicada]);
   const empleado = useMemo(() => empleados?.find((e) => e.id === empleadoId) ?? null, [empleados, empleadoId]);
   const hoy = new Date().toISOString().slice(0, 10);
 
@@ -192,8 +222,15 @@ export default function Reservas() {
                       >
                         <div className="flex flex-col gap-space-xs">
                           <div className="flex items-start justify-between gap-space-xs">
-                            <h2 className="font-headline-sm text-headline-sm text-on-surface">{s.nombre}</h2>
-                            <span className="font-headline-sm text-headline-sm text-primary shrink-0">{Math.round(s.precio)}€</span>
+                            <div className="flex flex-col gap-1">
+                              {esCombo(s) && (
+                                <span className="self-start font-label-sm text-[11px] uppercase tracking-widest bg-primary text-on-primary px-2 py-0.5 rounded">
+                                  Promo
+                                </span>
+                              )}
+                              <h2 className="font-headline-sm text-headline-sm text-on-surface">{s.nombre}</h2>
+                            </div>
+                            <span className="font-headline-sm text-headline-sm text-primary shrink-0">{soles(s.precio)}</span>
                           </div>
                           {s.descripcion && <p className="font-body-sm text-body-sm text-on-surface-variant mt-1">{s.descripcion}</p>}
                         </div>
@@ -361,7 +398,7 @@ export default function Reservas() {
                       </span>
                     </div>
                   </div>
-                  <span className="font-headline-sm text-headline-sm text-primary">{servicio ? `${Math.round(servicio.precio)}€` : "-"}</span>
+                  <span className="font-headline-sm text-headline-sm text-primary">{servicio ? soles(servicio.precio) : "-"}</span>
                 </div>
                 <div className="flex items-start gap-space-xs pt-space-xs border-t border-outline-variant/20">
                   <span className="material-symbols-outlined text-secondary text-[20px] mt-0.5">person</span>
@@ -382,11 +419,23 @@ export default function Reservas() {
                   </div>
                 </div>
               </div>
+              {servicio && (
+                <div className="flex items-start gap-space-xs p-space-sm rounded-lg bg-surface-container-lowest/60 border border-primary/20 font-body-sm text-body-sm text-on-surface-variant">
+                  <span className="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">local_offer</span>
+                  {esCombo(servicio) ? (
+                    <span>Precio de combo, igual para todos. No se combina con el {DESCUENTO_FFAA_PNP.porcentaje}% de FF.AA. y PNP.</span>
+                  ) : (
+                    <span>
+                      ¿Eres de FF.AA. o PNP? Tienes <strong className="text-primary">{DESCUENTO_FFAA_PNP.porcentaje}% de descuento</strong> en este servicio mostrando tu carnet y/o CIP en el local.
+                    </span>
+                  )}
+                </div>
+              )}
               <div className="bg-surface-container-lowest p-space-md rounded-xl flex flex-col gap-space-2xs">
                 <div className="flex justify-between items-baseline">
                   <span className="font-headline-sm text-headline-sm text-on-surface font-bold">Total a Pagar</span>
                   <span className="font-headline-md text-headline-md text-primary font-bold">
-                    {servicio ? `${Math.round(servicio.precio)}€` : "-"}
+                    {servicio ? soles(servicio.precio) : "-"}
                   </span>
                 </div>
               </div>

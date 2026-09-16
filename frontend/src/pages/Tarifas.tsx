@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
+import { soles } from "../lib/moneda";
 import type { Categoria, Configuracion, Servicio } from "../lib/types";
 
 export default function Tarifas() {
@@ -128,7 +129,7 @@ export default function Tarifas() {
                                   {s.nombre}
                                 </h3>
                                 <span className="font-headline-md text-headline-md text-primary shrink-0">
-                                  {Math.round(s.precio)}€
+                                  {soles(s.precio)}
                                 </span>
                               </div>
                               {s.descripcion && (
