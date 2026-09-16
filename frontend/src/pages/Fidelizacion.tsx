@@ -27,7 +27,7 @@ export default function Fidelizacion() {
             </div>
             <div className="flex flex-col gap-space-2xs">
               <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary bg-surface-container-highest px-space-xs py-0.5 rounded w-fit">
-                Socio NutriaSyle
+                Socio Nutria Style
               </span>
               <h1 className="font-headline-md text-headline-md text-on-surface font-bold">
                 Bienvenido de vuelta, <span className="text-primary">{displayName}</span>
@@ -48,7 +48,7 @@ export default function Fidelizacion() {
                 <div className="flex items-center gap-space-xs">
                   <span className="material-symbols-outlined text-primary text-[24px]">workspace_premium</span>
                   <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold">
-                    Cartilla Exclusiva de Sellos NutriaSyle
+                    Cartilla Exclusiva de Sellos Nutria Style
                   </span>
                 </div>
                 <h2 className="font-headline-lg text-headline-lg text-primary leading-tight">
@@ -184,7 +184,7 @@ export default function Fidelizacion() {
               </li>
               <li className="flex items-start gap-space-xs">
                 <span className="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">shopping_bag</span>
-                <span><strong className="text-on-surface font-medium">Botica NutriaSyle:</strong> 15% de descuento permanente en ceras, elixires botánicos y lociones post-afeitado.</span>
+                <span><strong className="text-on-surface font-medium">Botica Nutria Style:</strong> 15% de descuento permanente en ceras, elixires botánicos y lociones post-afeitado.</span>
               </li>
               <li className="flex items-start gap-space-xs">
                 <span className="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">event_available</span>
@@ -198,7 +198,7 @@ export default function Fidelizacion() {
         <section className="flex flex-col gap-space-md bg-surface-container-low p-space-lg md:p-space-xl rounded-xl shadow-lg">
           <div>
             <h3 className="font-headline-sm text-headline-sm text-on-surface font-semibold">Historial de Reservas</h3>
-            <p className="font-body-sm text-body-sm text-on-surface-variant">Tus últimas citas agendadas en NutriaSyle.</p>
+            <p className="font-body-sm text-body-sm text-on-surface-variant">Tus últimas citas agendadas en Nutria Style.</p>
           </div>
           {!data?.historial || data.historial.length === 0 ? (
             <p className="font-body-md text-body-md text-on-surface-variant">Aún no tienes reservas registradas.</p>

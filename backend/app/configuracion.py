@@ -1,7 +1,7 @@
 from app.supabase_client import get_supabase_admin
 
 _DEFAULTS = {
-    "nombre_barberia": "NutriaSyle",
+    "nombre_barberia": "Nutria Style",
     "telefono_whatsapp": None,
     "direccion": None,
     "horario": None,

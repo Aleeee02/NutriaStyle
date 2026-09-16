@@ -16,9 +16,9 @@ export function Header() {
     <header className="fixed top-0 left-0 w-full z-50 bg-surface-container-lowest/85 backdrop-blur-xl border-b border-outline-variant/30 shadow-[0_4px_24px_rgba(0,0,0,0.6)]">
       <div className="h-20 max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-between gap-space-md">
         <div className="flex items-center gap-space-sm shrink-0">
-          <img alt="NutriaSyle Logo" className="h-11 w-11 rounded-full object-cover" src="/img/logo.jpeg" />
+          <img alt="Nutria Style Logo" className="h-11 w-11 rounded-full object-cover" src="/img/logo.jpeg" />
           <span className="font-headline-sm text-headline-sm text-primary tracking-wide hidden sm:inline-block">
-            NutriaSyle
+            Nutria Style
           </span>
         </div>
         <nav className="hidden lg:flex items-center gap-space-lg">

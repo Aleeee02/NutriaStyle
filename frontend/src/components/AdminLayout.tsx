@@ -19,7 +19,7 @@ export function AdminLayout({ children }: { children: ReactNode }) {
         <div className="h-16 max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex items-center justify-between gap-space-md">
           <div className="flex items-center gap-space-md">
             <Link className="font-headline-sm text-headline-sm text-primary tracking-wide" to="/admin">
-              NutriaSyle · Admin
+              Nutria Style · Admin
             </Link>
             <nav className="hidden sm:flex items-center gap-space-md">
               {ADMIN_LINKS.map((link) => (
@@ -46,8 +46,20 @@ export function AdminLayout({ children }: { children: ReactNode }) {
             </button>
           </div>
         </div>
+        {/* En pantallas chicas el menu va en una segunda fila con scroll horizontal. */}
+        <nav className="sm:hidden flex items-center gap-space-md overflow-x-auto px-margin-mobile h-11 border-t border-outline-variant/20">
+          {ADMIN_LINKS.map((link) => (
+            <Link
+              key={link.to}
+              className="shrink-0 font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
+              to={link.to}
+            >
+              {link.label}
+            </Link>
+          ))}
+        </nav>
       </header>
-      <main className="w-full pt-24 pb-space-3xl bg-background min-h-screen">
+      <main className="w-full pt-32 sm:pt-24 pb-space-3xl bg-background min-h-screen">
         <div className="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-lg">
           {children}
         </div>

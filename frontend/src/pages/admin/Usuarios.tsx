@@ -4,7 +4,7 @@ import type { UsuarioAdmin } from "../../lib/types";
 
 export default function AdminUsuarios() {
   const queryClient = useQueryClient();
-  const { data } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["admin", "usuarios"],
     queryFn: () => api.get<{ usuarios: UsuarioAdmin[]; sellos_meta: number }>("/admin/usuarios"),
   });
@@ -32,10 +32,55 @@ export default function AdminUsuarios() {
         </p>
       </div>
 
-      {!data || data.usuarios.length === 0 ? (
+      {isLoading ? (
+        <p className="font-body-md text-body-md text-on-surface-variant">Cargando usuarios…</p>
+      ) : isError ? (
+        <p className="font-body-md text-body-md text-error">No se pudieron cargar los usuarios. Recarga la página.</p>
+      ) : !data || data.usuarios.length === 0 ? (
         <p className="font-body-md text-body-md text-on-surface-variant">Todavía no hay usuarios registrados.</p>
       ) : (
-        <div className="w-full overflow-x-auto bg-surface-container-low rounded-xl shadow-lg">
+        <>
+        {/* Movil: tarjetas, para que "+1 Sello" quede siempre a mano. */}
+        <ul className="sm:hidden flex flex-col gap-space-sm">
+          {data.usuarios.map((u) => (
+            <li key={u.id} className="bg-surface-container-low rounded-xl shadow-lg p-space-md flex flex-col gap-space-sm">
+              <div className="flex items-start justify-between gap-space-sm">
+                <div className="min-w-0">
+                  <p className="font-body-md text-body-md text-on-surface font-medium">
+                    {u.nombre} {u.apellido || ""}
+                  </p>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant break-all">{u.email || "-"}</p>
+                </div>
+                <span className={`shrink-0 font-label-sm text-[11px] uppercase tracking-wider px-2 py-0.5 rounded ${u.rol === "admin" ? "bg-primary text-on-primary" : "bg-surface-container-highest text-on-surface-variant"}`}>
+                  {u.rol}
+                </span>
+              </div>
+              <p className="font-body-sm text-body-sm text-on-surface-variant">
+                <span className="text-primary font-semibold">{u.sellos}</span> sellos ·{" "}
+                {u.listo_para_canjear ? <span className="text-primary">¡Listo para canjear!</span> : <>faltan {u.faltan}</>}
+              </p>
+              <div className="flex gap-space-sm">
+                <button
+                  className="flex-1 border border-outline-variant rounded-lg py-2 text-secondary font-label-sm text-label-sm uppercase tracking-wider"
+                  onClick={() => agregarSello(u.id)}
+                  type="button"
+                >
+                  +1 Sello
+                </button>
+                {u.listo_para_canjear && (
+                  <button
+                    className="flex-1 bg-primary text-on-primary rounded-lg py-2 font-label-sm text-label-sm uppercase tracking-wider font-bold"
+                    onClick={() => canjear(u.id)}
+                    type="button"
+                  >
+                    Canjear
+                  </button>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+        <div className="hidden sm:block w-full overflow-x-auto bg-surface-container-low rounded-xl shadow-lg">
           <table className="w-full text-left border-collapse">
             <thead>
               <tr className="bg-surface-container font-label-sm text-label-sm text-secondary uppercase tracking-widest">
@@ -86,6 +131,7 @@ export default function AdminUsuarios() {
             </tbody>
           </table>
         </div>
+        </>
       )}
     </>
   );

@@ -100,7 +100,7 @@ export default function Reservas() {
                 <span className="material-symbols-outlined text-[22px]">calendar_month</span>
               </div>
               <div>
-                <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary block">NutriaSyle Concierge</span>
+                <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary block">Nutria Style Concierge</span>
                 <span className="font-headline-sm text-headline-sm text-on-surface">Agendamiento Artesanal</span>
               </div>
             </div>
@@ -333,7 +333,7 @@ export default function Reservas() {
               <div className="flex items-center justify-between pb-space-sm border-b border-outline-variant/30">
                 <div className="flex flex-col">
                   <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Resumen de Cita</span>
-                  <h2 className="font-headline-sm text-headline-sm text-primary">NutriaSyle</h2>
+                  <h2 className="font-headline-sm text-headline-sm text-primary">Nutria Style</h2>
                 </div>
                 <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
                   <span className="material-symbols-outlined text-[24px]">content_cut</span>

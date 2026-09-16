@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { api, ApiError } from "../lib/api";
-import { BACKEND_ORIGIN } from "../lib/config";
 import type { CurrentUser } from "../lib/types";
 
 export default function Login() {
@@ -33,7 +32,7 @@ export default function Login() {
       <div className="w-full max-w-md bg-surface-container-low p-space-xl rounded-xl shadow-lg my-space-3xl">
         <div className="flex flex-col gap-space-2xs mb-space-lg text-center">
           <h1 className="font-headline-md text-headline-md text-on-surface font-bold">Iniciar Sesión</h1>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Accede a tu cuenta de socio NutriaSyle.</p>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">Accede a tu cuenta de socio Nutria Style.</p>
         </div>
 
         {error && (
@@ -86,7 +85,7 @@ export default function Login() {
 
         <a
           className="w-full flex items-center justify-center gap-space-xs py-space-sm rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-md text-label-md uppercase tracking-wider transition-colors"
-          href={`${BACKEND_ORIGIN}/login/google`}
+          href="/login/google"
         >
           <svg className="w-5 h-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
             <path

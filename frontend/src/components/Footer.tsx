@@ -9,7 +9,7 @@ export function Footer() {
     queryFn: () => api.get<Configuracion>("/config"),
   });
 
-  const nombre = config?.nombre_barberia ?? "NutriaSyle";
+  const nombre = config?.nombre_barberia ?? "Nutria Style";
 
   return (
     <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/30">
@@ -17,7 +17,7 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-space-xl">
           <div className="flex flex-col gap-space-sm">
             <div className="flex items-center gap-space-xs">
-              <img alt="NutriaSyle Logo" className="h-9 w-9 rounded-full object-cover" src="/img/logo.jpeg" />
+              <img alt="Nutria Style Logo" className="h-9 w-9 rounded-full object-cover" src="/img/logo.jpeg" />
               <span className="font-headline-sm text-headline-sm text-primary">{nombre}</span>
             </div>
             <p className="font-body-sm text-body-sm text-on-surface-variant">

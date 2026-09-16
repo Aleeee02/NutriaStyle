@@ -27,7 +27,7 @@ export default function Barberos() {
                 Nuestro Equipo de Barberos
               </h1>
               <p className="font-body-lg text-body-lg text-on-surface-variant mt-space-2xs">
-                Cada barbero de NutriaSyle encarna una devoción inquebrantable por el filo certero, la geometría
+                Cada barbero de Nutria Style encarna una devoción inquebrantable por el filo certero, la geometría
                 clásica y el diálogo reposado.
               </p>
             </div>

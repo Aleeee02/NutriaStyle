@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { api, ApiError } from "../lib/api";
-import { BACKEND_ORIGIN } from "../lib/config";
 import type { CurrentUser } from "../lib/types";
 
 export default function Registro() {
@@ -42,7 +41,7 @@ export default function Registro() {
       <div className="w-full max-w-md bg-surface-container-low p-space-xl rounded-xl shadow-lg my-space-3xl">
         <div className="flex flex-col gap-space-2xs mb-space-lg text-center">
           <h1 className="font-headline-md text-headline-md text-on-surface font-bold">Crear Cuenta</h1>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Únete al club de fidelidad NutriaSyle.</p>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">Únete al club de fidelidad Nutria Style.</p>
         </div>
 
         {info && (
@@ -128,7 +127,7 @@ export default function Registro() {
 
         <a
           className="w-full flex items-center justify-center gap-space-xs py-space-sm rounded-lg bg-surface-container-high hover:bg-surface-bright text-on-surface font-label-md text-label-md uppercase tracking-wider transition-colors"
-          href={`${BACKEND_ORIGIN}/login/google`}
+          href="/login/google"
         >
           <svg className="w-5 h-5" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
             <path d="M43.6 20.5h-1.9V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.7-.4-3.5z" fill="#FFC107" />

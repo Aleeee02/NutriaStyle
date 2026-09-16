@@ -1,6 +1,7 @@
-import { BACKEND_ORIGIN } from "./config";
-
-const API_BASE = `${BACKEND_ORIGIN}/api`;
+// Siempre relativo: en local lo reenvia el proxy de Vite y en produccion los
+// rewrites de vercel.json. Asi el navegador solo habla con un dominio y la
+// cookie de sesion es "propia" (Safari/iPhone bloquea las de terceros).
+const API_BASE = "/api";
 
 export class ApiError extends Error {
   status: number;

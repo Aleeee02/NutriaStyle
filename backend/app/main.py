@@ -36,14 +36,14 @@ _ORIGINS = _parse_origins(os.environ.get("FRONTEND_ORIGIN", "http://localhost:51
 
 # Origen principal: a donde se vuelve tras el login de Google.
 FRONTEND_ORIGIN = _ORIGINS[0] if _ORIGINS else "http://localhost:5173"
-_CROSS_ORIGIN_HTTPS = FRONTEND_ORIGIN.startswith("https://")
+_SECURE_COOKIE = FRONTEND_ORIGIN.startswith("https://")
 
 # Los deploys de preview de Vercel usan subdominios generados
 # (nutria-style-git-rama-usuario.vercel.app). Se aceptan tambien para no tener
 # que registrar cada uno a mano, junto con localhost para desarrollo.
 CORS_ORIGIN_REGEX = r"https://nutria-?style[a-z0-9\-]*\.vercel\.app|http://localhost:\d+"
 
-app = FastAPI(title="NutriaSyle API")
+app = FastAPI(title="Nutria Style API")
 
 app.add_middleware(
     CORSMiddleware,
@@ -64,11 +64,11 @@ def _set_session_cookie(response: Response, access_token: str) -> None:
         SESSION_COOKIE,
         access_token,
         httponly=True,
-        # Frontend y backend viven en dominios distintos (Vercel / Render),
-        # asi que la cookie necesita SameSite=None + Secure para viajar en
-        # las peticiones fetch entre ambos. En local (http) se usa Lax.
-        samesite="none" if _CROSS_ORIGIN_HTTPS else "lax",
-        secure=_CROSS_ORIGIN_HTTPS,
+        # Vercel reenvia /api/* a Render, asi que para el navegador la cookie
+        # es del mismo dominio que la pagina: Lax basta y protege de CSRF.
+        # (Con dominios distintos, Safari/iPhone la bloquea como de terceros.)
+        samesite="lax",
+        secure=_SECURE_COOKIE,
         max_age=SESSION_MAX_AGE,
     )
 
@@ -159,8 +159,8 @@ def api_logout():
     response = JSONResponse({"ok": True})
     response.delete_cookie(
         SESSION_COOKIE,
-        samesite="none" if _CROSS_ORIGIN_HTTPS else "lax",
-        secure=_CROSS_ORIGIN_HTTPS,
+        samesite="lax",
+        secure=_SECURE_COOKIE,
     )
     return response
 
@@ -269,6 +269,6 @@ def health_check():
     # publicas, no hay nada sensible aqui.
     return {
         "status": "ok",
-        "service": "NutriaSyle API",
+        "service": "Nutria Style API",
         "cors_origins": _ORIGINS,
     }
