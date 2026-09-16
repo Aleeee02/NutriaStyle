@@ -56,8 +56,8 @@ export default function Tarifas() {
           >
             <span className="material-symbols-outlined text-primary text-[28px]">military_tech</span>
             <span className="flex-1 font-body-md text-body-md text-on-surface">
-              <strong className="text-primary">20% de descuento para FF.AA. y PNP</strong> en servicios individuales, mostrando tu carnet y/o CIP.
-              <span className="text-on-surface-variant"> No aplica en combos.</span>
+              <strong className="text-primary">20% de descuento para FF.AA. y PNP</strong> en Corte Clásico y Corte con Diseño, mostrando tu carnet y/o CIP.
+              <span className="text-on-surface-variant"> No aplica en combos, barba ni cejas.</span>
             </span>
             <span className="font-label-md text-label-md uppercase tracking-wider text-primary">Ver promociones →</span>
           </Link>

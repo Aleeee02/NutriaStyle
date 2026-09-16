@@ -33,6 +33,20 @@ export const COMBOS: Combo[] = [
   },
 ];
 
+// Servicios a los que aplica el 20% de FF.AA./PNP (nombres como estan en
+// Admin > Servicios). Si se renombra alguno alli, actualizarlo tambien aqui.
+const SERVICIOS_CON_DESCUENTO_FFAA = ["Corte Clásico", "Corte con Diseño"];
+
+function normalizar(texto: string): string {
+  return texto.normalize("NFD").replace(/[̀-ͯ]/g, "").trim().toLowerCase();
+}
+
+/** ¿El 20% de FF.AA./PNP aplica a este servicio? (combos, barba, cejas: no) */
+export function aplicaDescuentoFfaa(nombreServicio: string): boolean {
+  const nombre = normalizar(nombreServicio);
+  return SERVICIOS_CON_DESCUENTO_FFAA.some((s) => normalizar(s) === nombre);
+}
+
 export const DESCUENTO_FFAA_PNP = {
   porcentaje: 20,
   titulo: "Descuento para FF.AA. y PNP",
@@ -41,10 +55,10 @@ export const DESCUENTO_FFAA_PNP = {
   condiciones: [
     "Presenta tu carnet y/o CIP vigente al momento de pagar.",
     "Válido solo para el titular del carnet; no aplica para familiares.",
-    "Se aplica sobre el precio de cualquier servicio individual.",
-    "No aplica sobre los combos, que mantienen su precio.",
+    `Válido solo en ${SERVICIOS_CON_DESCUENTO_FFAA.join(" y ")}.`,
+    "No aplica en combos, barba ni cejas.",
   ],
 };
 
 export const NOTA_NO_ACUMULABLE =
-  "Las promociones no son acumulables: si eres de FF.AA. o PNP, eliges el combo a su precio o el 20% de descuento en un servicio individual.";
+  "Las promociones no son acumulables: si eres de FF.AA. o PNP, eliges el combo a su precio o el 20% de descuento en tu corte.";

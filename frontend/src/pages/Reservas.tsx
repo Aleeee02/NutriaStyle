@@ -6,7 +6,7 @@ import { api, ApiError } from "../lib/api";
 import type { Configuracion, Categoria, Empleado, Servicio } from "../lib/types";
 import { urlComoLlegar } from "../lib/mapa";
 import { soles } from "../lib/moneda";
-import { DESCUENTO_FFAA_PNP } from "../lib/promociones";
+import { aplicaDescuentoFfaa, DESCUENTO_FFAA_PNP } from "../lib/promociones";
 
 const STEP_LABELS = ["Servicio", "Maestro", "Fecha y Hora", "Confirmación"];
 
@@ -436,14 +436,14 @@ export default function Reservas() {
                   </div>
                 </div>
               </div>
-              {servicio && (
+              {servicio && (esCombo(servicio) || aplicaDescuentoFfaa(servicio.nombre)) && (
                 <div className="flex items-start gap-space-xs p-space-sm rounded-lg bg-surface-container-lowest/60 border border-primary/20 font-body-sm text-body-sm text-on-surface-variant">
                   <span className="material-symbols-outlined text-primary text-[18px] shrink-0 mt-0.5">local_offer</span>
                   {esCombo(servicio) ? (
                     <span>Precio de combo, igual para todos. No se combina con el {DESCUENTO_FFAA_PNP.porcentaje}% de FF.AA. y PNP.</span>
                   ) : (
                     <span>
-                      ¿Eres de FF.AA. o PNP? Tienes <strong className="text-primary">{DESCUENTO_FFAA_PNP.porcentaje}% de descuento</strong> en este servicio mostrando tu carnet y/o CIP en el local.
+                      ¿Eres de FF.AA. o PNP? Tienes <strong className="text-primary">{DESCUENTO_FFAA_PNP.porcentaje}% de descuento</strong> en este corte mostrando tu carnet y/o CIP en el local.
                     </span>
                   )}
                 </div>

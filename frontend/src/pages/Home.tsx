@@ -197,7 +197,7 @@ export default function Home() {
               >
                 <span className="font-label-sm text-label-sm uppercase tracking-widest">FF.AA. y PNP</span>
                 <span className="font-headline-xl text-headline-xl leading-none">{DESCUENTO_FFAA_PNP.porcentaje}% dcto.</span>
-                <span className="font-body-sm text-body-sm">En servicios individuales, mostrando tu carnet y/o CIP.</span>
+                <span className="font-body-sm text-body-sm">En Corte Clásico y Corte con Diseño, mostrando tu carnet y/o CIP.</span>
               </Link>
             </div>
           </div>
