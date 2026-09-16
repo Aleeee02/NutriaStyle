@@ -11,7 +11,7 @@ export default function Fidelizacion() {
   const { user } = useAuth();
   const [modalAbierto, setModalAbierto] = useState(false);
   const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
-  const comoLlegar = urlComoLlegar(config);
+  const comoLlegar = urlComoLlegar();
   const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ["fidelizacion", "me"],

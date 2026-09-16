@@ -11,7 +11,7 @@ export function Footer() {
   });
 
   const nombre = config?.nombre_barberia ?? "Nutria Style";
-  const comoLlegar = urlComoLlegar(config);
+  const comoLlegar = urlComoLlegar();
 
   return (
     <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/30">
@@ -48,7 +48,7 @@ export function Footer() {
             <div className="flex flex-col gap-space-xs text-on-surface-variant font-body-sm text-body-sm">
               <div className="flex items-start gap-space-xs">
                 <span className="material-symbols-outlined text-secondary text-[20px] shrink-0">pin_drop</span>
-                {comoLlegar ? (
+                {config?.direccion ? (
                   <a className="hover:text-primary transition-colors underline-offset-2 hover:underline" href={comoLlegar} target="_blank" rel="noreferrer">
                     {config?.direccion}
                   </a>

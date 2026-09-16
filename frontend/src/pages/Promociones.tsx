@@ -10,7 +10,7 @@ const FILL = { fontVariationSettings: "'FILL' 1" };
 
 export default function Promociones() {
   const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
-  const comoLlegar = urlComoLlegar(config);
+  const comoLlegar = urlComoLlegar();
 
   return (
     <main className="w-full pt-20 bg-background min-h-screen">

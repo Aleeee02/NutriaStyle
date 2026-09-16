@@ -15,7 +15,7 @@ export default function Reservas() {
   const { data: servicios } = useQuery({ queryKey: ["servicios"], queryFn: () => api.get<Servicio[]>("/servicios") });
   const { data: empleados } = useQuery({ queryKey: ["empleados"], queryFn: () => api.get<Empleado[]>("/empleados") });
   const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
-  const comoLlegar = urlComoLlegar(config);
+  const comoLlegar = urlComoLlegar();
 
   const [step, setStep] = useState(1);
   const [categoriaFiltro, setCategoriaFiltro] = useState<string>("all");

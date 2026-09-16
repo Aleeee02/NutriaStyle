@@ -10,8 +10,8 @@ const FILL = { fontVariationSettings: "'FILL' 1" };
 
 export default function Home() {
   const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
-  const comoLlegar = urlComoLlegar(config);
-  const mapa = urlMapaEmbebido(config);
+  const comoLlegar = urlComoLlegar();
+  const mapa = urlMapaEmbebido();
 
   return (
     <main className="w-full pt-20 bg-background min-h-screen">
