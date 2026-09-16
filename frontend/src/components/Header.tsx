@@ -1,11 +1,12 @@
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 
+// "Reservar Cita" no va aqui: ya es el boton dorado de la derecha.
 const NAV_LINKS = [
-  { to: "/", label: "Inicio & Historia" },
-  { to: "/tarifas", label: "Servicios & Tarifas" },
-  { to: "/reservas", label: "Reservar Cita" },
-  { to: "/barberos", label: "Equipo & Reseñas" },
+  { to: "/", label: "Inicio" },
+  { to: "/tarifas", label: "Servicios" },
+  { to: "/promociones", label: "Promociones" },
+  { to: "/barberos", label: "Equipo" },
 ];
 
 export function Header() {
@@ -30,8 +31,8 @@ export function Header() {
                 to={link.to}
                 className={
                   active
-                    ? "uppercase tracking-wider transition-colors text-primary font-bold"
-                    : "font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
+                    ? "whitespace-nowrap font-label-md text-label-md uppercase tracking-wider transition-colors text-primary font-bold"
+                    : "whitespace-nowrap font-label-md text-label-md uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors"
                 }
               >
                 {link.label}

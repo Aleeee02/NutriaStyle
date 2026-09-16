@@ -47,6 +47,20 @@ export default function Tarifas() {
           </div>
         </section>
 
+        <div className="w-full px-margin-mobile md:px-margin-desktop pt-space-lg">
+          <Link
+            className="max-w-[1280px] mx-auto flex flex-col sm:flex-row sm:items-center gap-space-sm p-space-md rounded-xl bg-surface-container-low border border-primary/30 hover:border-primary/60 transition-colors"
+            to="/promociones"
+          >
+            <span className="material-symbols-outlined text-primary text-[28px]">military_tech</span>
+            <span className="flex-1 font-body-md text-body-md text-on-surface">
+              <strong className="text-primary">20% de descuento para FF.AA. y PNP</strong> en servicios individuales, mostrando tu carnet y/o CIP.
+              <span className="text-on-surface-variant"> No aplica en combos.</span>
+            </span>
+            <span className="font-label-md text-label-md uppercase tracking-wider text-primary">Ver promociones →</span>
+          </Link>
+        </div>
+
         {grupos.length === 0 ? (
           <section className="w-full px-margin-mobile md:px-margin-desktop py-space-3xl">
             <p className="max-w-[1280px] mx-auto font-body-md text-body-md text-on-surface-variant">

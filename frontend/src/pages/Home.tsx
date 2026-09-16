@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { urlComoLlegar, urlMapaEmbebido } from "../lib/mapa";
+import { COMBOS, DESCUENTO_FFAA_PNP } from "../lib/promociones";
 import type { Configuracion } from "../lib/types";
 
 const FILL = { fontVariationSettings: "'FILL' 1" };
@@ -158,6 +159,45 @@ export default function Home() {
                     "Ser el templo de referencia del cuidado masculino, combinando técnicas tradicionales con las últimas tendencias."}
                 </p>
               </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Promociones */}
+        <section className="w-full bg-background pt-space-3xl">
+          <div className="max-w-[1280px] mx-auto px-margin-mobile md:px-margin-desktop flex flex-col gap-space-lg">
+            <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm">
+              <div className="flex flex-col gap-space-2xs">
+                <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Promociones Vigentes</span>
+                <h2 className="font-headline-lg text-headline-lg text-on-surface">El día que tu estilo cuesta menos</h2>
+              </div>
+              <Link className="font-label-md text-label-md uppercase tracking-wider text-primary hover:underline" to="/promociones">
+                Ver condiciones
+              </Link>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-space-md">
+              {COMBOS.map((combo) => (
+                <Link
+                  key={combo.id}
+                  className="flex flex-col gap-space-xs p-space-lg rounded-xl bg-surface-container-low border border-primary/20 hover:border-primary/60 transition-colors"
+                  to="/promociones"
+                >
+                  <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary">{combo.nombre}</span>
+                  <span className="font-headline-sm text-headline-sm text-on-surface">{combo.titulo}</span>
+                  <span className="font-body-sm text-body-sm text-on-surface-variant">
+                    {combo.incluye.slice(1).map((i) => `+ ${i}`).join(" ")} + bebida
+                  </span>
+                  <span className="mt-auto font-headline-lg text-headline-lg text-primary">S/ {combo.precio}</span>
+                </Link>
+              ))}
+              <Link
+                className="flex flex-col gap-space-xs p-space-lg rounded-xl bg-primary text-on-primary sm:col-span-2 lg:col-span-1 hover:bg-primary-fixed-dim transition-colors"
+                to="/promociones"
+              >
+                <span className="font-label-sm text-label-sm uppercase tracking-widest">FF.AA. y PNP</span>
+                <span className="font-headline-xl text-headline-xl leading-none">{DESCUENTO_FFAA_PNP.porcentaje}% dcto.</span>
+                <span className="font-body-sm text-body-sm">En servicios individuales, mostrando tu carnet y/o CIP.</span>
+              </Link>
             </div>
           </div>
         </section>
