@@ -18,6 +18,14 @@ class SessionBody(BaseModel):
     access_token: str
 
 
+class CanjeBody(BaseModel):
+    codigo: str
+
+
+class RolBody(BaseModel):
+    rol: str
+
+
 class PerfilBody(BaseModel):
     nombre: str
     apellido: str

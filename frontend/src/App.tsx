@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { AdminLayout } from "./components/AdminLayout";
-import { RequireAdmin, RequireAuth } from "./components/RouteGuards";
+import { RequireAdmin, RequireAuth, RequireStaff } from "./components/RouteGuards";
 
 import Home from "./pages/Home";
 import Barberos from "./pages/Barberos";
@@ -10,6 +10,7 @@ import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import AuthCallback from "./pages/AuthCallback";
 import CompletarPerfil from "./pages/CompletarPerfil";
+import Canjear from "./pages/Canjear";
 import Reservas from "./pages/Reservas";
 import Fidelizacion from "./pages/Fidelizacion";
 
@@ -32,6 +33,16 @@ export default function App() {
       <Route path="/login" element={<Layout><Login /></Layout>} />
       <Route path="/registro" element={<Layout><Registro /></Layout>} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route
+        path="/canjear"
+        element={
+          <RequireStaff>
+            <Layout>
+              <Canjear />
+            </Layout>
+          </RequireStaff>
+        }
+      />
       <Route
         path="/completar-perfil"
         element={

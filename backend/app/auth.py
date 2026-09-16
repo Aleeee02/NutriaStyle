@@ -4,6 +4,9 @@ from app.supabase_client import get_supabase
 
 SESSION_COOKIE = "sb_access_token"
 
+# Roles que atienden en el salon y pueden, por ejemplo, canjear QR de clientes.
+STAFF_ROLES = ("admin", "barbero")
+
 
 def get_current_user(request: Request):
     """Devuelve el usuario de Supabase autenticado en esta request, o None."""
@@ -39,11 +42,12 @@ def serialize_user(user) -> dict:
     from app.supabase_client import get_supabase_admin
 
     rows = (
-        get_supabase_admin().table("usuarios").select("nombre, apellido, telefono").eq("id", user.id).execute().data
+        get_supabase_admin().table("usuarios").select("nombre, apellido, telefono, rol").eq("id", user.id).execute().data
     )
     perfil = rows[0] if rows else {}
     nombre = perfil.get("nombre") or ""
     apellido = perfil.get("apellido") or ""
+    rol = perfil.get("rol") or "cliente"
 
     return {
         "id": user.id,
@@ -54,6 +58,9 @@ def serialize_user(user) -> dict:
         "apellido": apellido,
         "telefono": perfil.get("telefono") or "",
         "perfil_completo": bool(nombre and apellido and perfil.get("telefono")),
+        "rol": rol,
+        "is_admin": rol == "admin",
+        "is_staff": rol in STAFF_ROLES,
     }
 
 
@@ -69,5 +76,13 @@ def require_admin(request: Request):
     """Dependencia para endpoints JSON: usuario con rol admin o 401/403."""
     user = require_login(request)
     if get_user_role(user.id) != "admin":
+        raise HTTPException(status_code=403, detail="No autorizado")
+    return user
+
+
+def require_staff(request: Request):
+    """Dependencia para endpoints JSON: admin o barbero, o 401/403."""
+    user = require_login(request)
+    if get_user_role(user.id) not in STAFF_ROLES:
         raise HTTPException(status_code=403, detail="No autorizado")
     return user

@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { useState } from "react";
+import { QRCodeSVG } from "qrcode.react";
+import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../lib/api";
@@ -7,12 +8,36 @@ import type { FidelizacionData } from "../lib/types";
 
 export default function Fidelizacion() {
   const { user } = useAuth();
-  const { data } = useQuery({ queryKey: ["fidelizacion", "me"], queryFn: () => api.get<FidelizacionData>("/fidelizacion/me") });
   const [modalAbierto, setModalAbierto] = useState(false);
+  const { data } = useQuery({
+    queryKey: ["fidelizacion", "me"],
+    queryFn: () => api.get<FidelizacionData>("/fidelizacion/me"),
+    // Con el QR en pantalla se consulta seguido: en cuanto el barbero lo
+    // canjea, el codigo deja de existir y el modal pasa a "canjeado".
+    refetchInterval: modalAbierto ? 4000 : false,
+  });
+
+  const codigo = data?.codigo_canje ?? null;
+  const urlCanje = codigo ? `${window.location.origin}/canjear?c=${encodeURIComponent(codigo)}` : null;
+
+  // Detecta el paso "tenia codigo" -> "ya no" con el modal abierto.
+  const codigoMostrado = useRef<string | null>(null);
+  const [canjeado, setCanjeado] = useState(false);
+  useEffect(() => {
+    if (!modalAbierto) return;
+    if (codigo) codigoMostrado.current = codigo;
+    else if (codigoMostrado.current) setCanjeado(true);
+  }, [codigo, modalAbierto]);
+
+  function cerrarModal() {
+    setModalAbierto(false);
+    setCanjeado(false);
+    codigoMostrado.current = null;
+  }
 
   const sellosMeta = data?.sellos_meta ?? 4;
   const sellosActuales = data?.tarjeta?.sellos ?? 0;
-  const desbloqueado = sellosActuales >= sellosMeta;
+  const desbloqueado = sellosActuales >= sellosMeta && codigo !== null;
   const porcentaje = Math.min(100, Math.floor((sellosActuales / sellosMeta) * 100));
   const displayName = user?.display_name ?? user?.email ?? "";
 
@@ -132,7 +157,7 @@ export default function Fidelizacion() {
                 type="button"
               >
                 <span className="material-symbols-outlined text-[20px]">qr_code_2</span>
-                Canjear Corte de Cortesía
+                {desbloqueado ? "Mostrar QR de Canje" : "Canjear Corte de Cortesía"}
               </button>
             </div>
           </div>
@@ -241,28 +266,45 @@ export default function Fidelizacion() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-space-md">
           <div className="relative w-full max-w-lg bg-surface-container-lowest p-space-xl rounded-xl shadow-2xl flex flex-col gap-space-lg">
             <button
+              aria-label="Cerrar"
               className="absolute top-4 right-4 text-outline hover:text-on-surface transition-colors"
-              onClick={() => setModalAbierto(false)}
+              onClick={cerrarModal}
               type="button"
             >
               <span className="material-symbols-outlined text-[24px]">close</span>
             </button>
-            <div className="flex flex-col items-center text-center gap-space-xs">
-              <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-lg mb-space-2xs">
-                <span className="material-symbols-outlined text-[36px]">card_giftcard</span>
+            {canjeado ? (
+              <div className="flex flex-col items-center text-center gap-space-xs">
+                <div className="w-16 h-16 rounded-full bg-primary flex items-center justify-center text-on-primary shadow-lg mb-space-2xs">
+                  <span className="material-symbols-outlined text-[36px]">check_circle</span>
+                </div>
+                <h3 className="font-headline-md text-headline-md text-primary font-bold">¡Corte Canjeado!</h3>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  Disfruta tu corte de cortesía. Tu tarjeta vuelve a empezar desde cero.
+                </p>
               </div>
-              <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-bold">Bono Oficial de Fidelidad</span>
-              <h3 className="font-headline-md text-headline-md text-primary font-bold">Corte de Cortesía Desbloqueado</h3>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">
-                Menciónalo con tu barbero al llegar a tu próxima cita para aplicar el corte gratuito.
+            ) : urlCanje ? (
+              <div className="flex flex-col items-center text-center gap-space-sm">
+                <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-bold">Bono Oficial de Fidelidad</span>
+                <h3 className="font-headline-md text-headline-md text-primary font-bold">Tu Corte de Cortesía</h3>
+                <div className="bg-white p-space-md rounded-xl shadow-lg">
+                  <QRCodeSVG value={urlCanje} size={220} level="M" marginSize={0} />
+                </div>
+                <p className="font-body-sm text-body-sm text-on-surface-variant">
+                  Muestra este código a tu barbero para que lo escanee. Es de un solo uso: al canjearlo, desaparece.
+                </p>
+              </div>
+            ) : (
+              <p className="font-body-md text-body-md text-on-surface-variant text-center py-space-lg">
+                Aún no tienes un corte de cortesía disponible.
               </p>
-            </div>
+            )}
             <button
               className="w-full py-space-sm rounded-lg bg-primary text-on-primary font-headline-sm text-[15px] font-bold uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors"
-              onClick={() => setModalAbierto(false)}
+              onClick={cerrarModal}
               type="button"
             >
-              Entendido
+              {canjeado ? "¡Genial!" : "Cerrar"}
             </button>
           </div>
         </div>

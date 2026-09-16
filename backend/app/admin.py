@@ -1,8 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import require_admin
+from app.canjes import canjear_tarjeta
 from app.constants import SELLOS_META
-from app.schemas import ConfiguracionBody, EmpleadoBody, EstadoReservaBody, HorarioBody, ServicioBody
+from app.schemas import ConfiguracionBody, EmpleadoBody, EstadoReservaBody, HorarioBody, RolBody, ServicioBody
 from app.supabase_client import get_supabase_admin
 
 router = APIRouter(prefix="/api/admin", dependencies=[Depends(require_admin)])
@@ -232,19 +233,28 @@ def admin_usuario_canjear(usuario_id: str):
     if not tarjeta_rows or tarjeta_rows[0]["sellos"] < SELLOS_META:
         raise HTTPException(status_code=400, detail="El usuario no tiene sellos suficientes para canjear")
 
-    tarjeta = tarjeta_rows[0]
-    nuevo_total = tarjeta["sellos"] - SELLOS_META
-    admin.table("tarjetas_fidelizacion").update({"sellos": nuevo_total}).eq("usuario_id", usuario_id).execute()
-    admin.table("movimientos_fidelizacion").insert(
-        {
-            "tarjeta_id": tarjeta["id"],
-            "tipo": "uso",
-            "cantidad": -SELLOS_META,
-            "descripcion": "Corte de cortesia canjeado",
-        }
-    ).execute()
+    return {"sellos": canjear_tarjeta(tarjeta_rows[0], "Corte de cortesía canjeado desde el panel")}
 
-    return {"sellos": nuevo_total}
+
+ROLES_ASIGNABLES = ["cliente", "barbero"]
+
+
+@router.put("/usuarios/{usuario_id}/rol")
+def admin_usuario_cambiar_rol(usuario_id: str, body: RolBody):
+    # Desde el panel solo se alterna cliente <-> barbero. Dar o quitar admin
+    # sigue siendo manual en Supabase, para que un clic no cree otro admin.
+    if body.rol not in ROLES_ASIGNABLES:
+        raise HTTPException(status_code=400, detail="Rol no válido")
+
+    admin = get_supabase_admin()
+    actual = admin.table("usuarios").select("rol").eq("id", usuario_id).limit(1).execute().data
+    if not actual:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    if actual[0].get("rol") == "admin":
+        raise HTTPException(status_code=400, detail="No se puede cambiar el rol de un administrador desde el panel")
+
+    admin.table("usuarios").update({"rol": body.rol}).eq("id", usuario_id).execute()
+    return {"rol": body.rol}
 
 
 # ---------- Reservas ----------

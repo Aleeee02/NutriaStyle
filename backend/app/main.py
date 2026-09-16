@@ -10,15 +10,16 @@ from app.admin import router as admin_router
 from app.auth import (
     SESSION_COOKIE,
     get_current_user,
-    is_admin_user,
     require_login,
+    require_staff,
     serialize_user,
 )
+from app.canjes import canjear_codigo, generar_codigo, vista_previa
 from app.configuracion import get_configuracion
 from app.constants import SELLOS_META
 from app.disponibilidad import calcular_slots_disponibles, hora_fin_desde_inicio
 from app.profiles import ensure_user_profile
-from app.schemas import LoginBody, PerfilBody, RegistroBody, ReservaCreateBody, SessionBody
+from app.schemas import CanjeBody, LoginBody, PerfilBody, RegistroBody, ReservaCreateBody, SessionBody
 from app.supabase_client import SUPABASE_URL, get_supabase, get_supabase_admin
 
 # URL del frontend (React en Vercel). En local, el proxy de Vite hace que
@@ -112,7 +113,7 @@ def api_auth_me(request: Request):
     user = get_current_user(request)
     if not user:
         raise HTTPException(status_code=401, detail="No autenticado")
-    return {**serialize_user(user), "is_admin": is_admin_user(user)}
+    return serialize_user(user)
 
 
 @app.post("/api/auth/login")
@@ -124,7 +125,7 @@ def api_login(body: LoginBody):
 
     ensure_user_profile(result.user)
 
-    response = JSONResponse({**serialize_user(result.user), "is_admin": is_admin_user(result.user)})
+    response = JSONResponse(serialize_user(result.user))
     _set_session_cookie(response, result.session.access_token)
     return response
 
@@ -144,10 +145,20 @@ def api_registro(body: RegistroBody):
             status_code=400, detail="No se pudo crear la cuenta. Comprueba los datos o prueba con otro email."
         )
 
+    # Supabase nunca crea una segunda cuenta con el mismo email, pero tampoco
+    # da error: devuelve un usuario ficticio sin identidades (para no revelar
+    # que el email existe). Sin este chequeo se intentaba crear el perfil de
+    # ese id inexistente y el registro fallaba con un 500.
+    if result.user is None or not result.user.identities:
+        raise HTTPException(
+            status_code=409,
+            detail="Ya existe una cuenta con este email. Inicia sesión o entra con Google.",
+        )
+
     ensure_user_profile(result.user, nombre=body.nombre, apellido=body.apellido, telefono=body.telefono)
 
     if result.session:
-        response = JSONResponse({**serialize_user(result.user), "is_admin": False})
+        response = JSONResponse(serialize_user(result.user))
         _set_session_cookie(response, result.session.access_token)
         return response
 
@@ -170,7 +181,7 @@ def api_auth_perfil(body: PerfilBody, user=Depends(require_login)):
         {"nombre": nombre, "apellido": apellido, "telefono": telefono}
     ).eq("id", user.id).execute()
 
-    return {**serialize_user(user), "is_admin": is_admin_user(user)}
+    return serialize_user(user)
 
 
 @app.post("/api/auth/logout")
@@ -200,7 +211,7 @@ def api_auth_session(body: SessionBody):
 
     ensure_user_profile(result.user)
 
-    response = JSONResponse({**serialize_user(result.user), "is_admin": is_admin_user(result.user)})
+    response = JSONResponse(serialize_user(result.user))
     _set_session_cookie(response, body.access_token)
     return response
 
@@ -245,7 +256,22 @@ def api_fidelizacion_me(user=Depends(require_login)):
         "sellos_meta": SELLOS_META,
         "proxima_cita": proxima_rows[0] if proxima_rows else None,
         "historial": historial,
+        "codigo_canje": generar_codigo(tarjeta),
     }
+
+
+# ---------- Canje con QR (admin o barbero) ----------
+
+
+@app.get("/api/canje")
+def api_canje_vista_previa(codigo: str, user=Depends(require_staff)):
+    return vista_previa(codigo)
+
+
+@app.post("/api/canje")
+def api_canje_confirmar(body: CanjeBody, user=Depends(require_staff)):
+    staff = serialize_user(user)
+    return canjear_codigo(body.codigo, f"{staff['display_name']} ({staff['rol']})")
 
 
 # ---------- Reservas ----------

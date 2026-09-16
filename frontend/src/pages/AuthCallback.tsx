@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { api, ApiError } from "../lib/api";
+import { destinoTrasLogin } from "../lib/loginRedirect";
 import type { CurrentUser } from "../lib/types";
 
 export default function AuthCallback() {
@@ -22,10 +23,13 @@ export default function AuthCallback() {
       .post<CurrentUser>("/auth/session", { access_token: accessToken })
       .then((user) => {
         setUser(user);
-        if (!user.perfil_completo) {
+        // El staff que llego escaneando un QR va directo al canje; completar
+        // el perfil puede esperar a que no haya un cliente delante.
+        const destino = destinoTrasLogin(user);
+        if (!user.perfil_completo && !destino.startsWith("/canjear")) {
           navigate("/completar-perfil", { replace: true });
         } else {
-          navigate(user.is_admin ? "/admin" : "/fidelizacion", { replace: true });
+          navigate(destino, { replace: true });
         }
       })
       .catch((err) => {

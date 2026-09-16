@@ -7,7 +7,9 @@ export interface CurrentUser {
   apellido: string;
   telefono: string;
   perfil_completo: boolean;
+  rol: string;
   is_admin: boolean;
+  is_staff: boolean;
 }
 
 export interface Categoria {
@@ -78,6 +80,13 @@ export interface FidelizacionData {
   sellos_meta: number;
   proxima_cita: Reserva | null;
   historial: Reserva[];
+  codigo_canje: string | null;
+}
+
+export interface CanjeVistaPrevia {
+  cliente: { nombre: string; apellido: string | null; email: string | null } | null;
+  sellos: number;
+  sellos_meta: number;
 }
 
 export interface Configuracion {

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { api, ApiError } from "../lib/api";
+import { destinoTrasLogin } from "../lib/loginRedirect";
 import type { CurrentUser } from "../lib/types";
 
 export default function Login() {
@@ -19,7 +20,7 @@ export default function Login() {
     try {
       const user = await api.post<CurrentUser>("/auth/login", { email, password });
       setUser(user);
-      navigate("/fidelizacion");
+      navigate(destinoTrasLogin(user), { replace: true });
     } catch (err) {
       setError(err instanceof ApiError ? err.message : "Email o contraseña incorrectos.");
     } finally {

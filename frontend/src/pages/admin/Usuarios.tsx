@@ -23,6 +23,31 @@ export default function AdminUsuarios() {
     invalidate();
   }
 
+  async function cambiarRol(id: string, rol: string) {
+    await api.put(`/admin/usuarios/${id}/rol`, { rol });
+    invalidate();
+  }
+
+  // Los admin se muestran como etiqueta fija: ese rol solo se cambia en Supabase.
+  function RolControl({ u }: { u: UsuarioAdmin }) {
+    if (u.rol === "admin") {
+      return (
+        <span className="shrink-0 font-label-sm text-[11px] uppercase tracking-wider px-2 py-0.5 rounded bg-primary text-on-primary">admin</span>
+      );
+    }
+    return (
+      <select
+        aria-label={`Rol de ${u.nombre}`}
+        className="shrink-0 bg-surface-container-highest text-on-surface-variant font-label-sm text-[11px] uppercase tracking-wider px-2 py-1 rounded focus:outline-none focus:ring-2 focus:ring-primary"
+        onChange={(e) => cambiarRol(u.id, e.target.value)}
+        value={u.rol}
+      >
+        <option value="cliente">Cliente</option>
+        <option value="barbero">Barbero</option>
+      </select>
+    );
+  }
+
   return (
     <>
       <div>
@@ -51,9 +76,7 @@ export default function AdminUsuarios() {
                   </p>
                   <p className="font-body-sm text-body-sm text-on-surface-variant break-all">{u.email || "-"}</p>
                 </div>
-                <span className={`shrink-0 font-label-sm text-[11px] uppercase tracking-wider px-2 py-0.5 rounded ${u.rol === "admin" ? "bg-primary text-on-primary" : "bg-surface-container-highest text-on-surface-variant"}`}>
-                  {u.rol}
-                </span>
+                <RolControl u={u} />
               </div>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
                 <span className="text-primary font-semibold">{u.sellos}</span> sellos ·{" "}
@@ -100,9 +123,7 @@ export default function AdminUsuarios() {
                   </td>
                   <td className="py-space-sm px-space-md text-on-surface-variant">{u.email || "-"}</td>
                   <td className="py-space-sm px-space-md">
-                    <span className={`font-label-sm text-[11px] uppercase tracking-wider px-2 py-0.5 rounded ${u.rol === "admin" ? "bg-primary text-on-primary" : "bg-surface-container-highest text-on-surface-variant"}`}>
-                      {u.rol}
-                    </span>
+                    <RolControl u={u} />
                   </td>
                   <td className="py-space-sm px-space-md text-primary font-semibold">{u.sellos}</td>
                   <td className="py-space-sm px-space-md">
