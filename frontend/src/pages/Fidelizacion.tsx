@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
@@ -9,15 +9,21 @@ import type { FidelizacionData } from "../lib/types";
 export default function Fidelizacion() {
   const { user } = useAuth();
   const [modalAbierto, setModalAbierto] = useState(false);
+  const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ["fidelizacion", "me"],
     queryFn: () => api.get<FidelizacionData>("/fidelizacion/me"),
-    // Con el QR en pantalla se consulta seguido: en cuanto el barbero lo
-    // canjea, el codigo deja de existir y el modal pasa a "canjeado".
-    refetchInterval: modalAbierto ? 4000 : false,
+  });
+  // Con el QR en pantalla se consulta seguido un endpoint liviano (solo la
+  // tarjeta): en cuanto el barbero lo canjea, el codigo deja de existir.
+  const { data: sondeo } = useQuery({
+    queryKey: ["fidelizacion", "codigo"],
+    queryFn: () => api.get<{ sellos: number; codigo_canje: string | null }>("/fidelizacion/codigo"),
+    enabled: modalAbierto,
+    refetchInterval: modalAbierto ? 3000 : false,
   });
 
-  const codigo = data?.codigo_canje ?? null;
+  const codigo = (modalAbierto && sondeo ? sondeo.codigo_canje : data?.codigo_canje) ?? null;
   const urlCanje = codigo ? `${window.location.origin}/canjear?c=${encodeURIComponent(codigo)}` : null;
 
   // Detecta el paso "tenia codigo" -> "ya no" con el modal abierto.
@@ -26,8 +32,11 @@ export default function Fidelizacion() {
   useEffect(() => {
     if (!modalAbierto) return;
     if (codigo) codigoMostrado.current = codigo;
-    else if (codigoMostrado.current) setCanjeado(true);
-  }, [codigo, modalAbierto]);
+    else if (codigoMostrado.current) {
+      setCanjeado(true);
+      queryClient.invalidateQueries({ queryKey: ["fidelizacion", "me"] });
+    }
+  }, [codigo, modalAbierto, queryClient]);
 
   function cerrarModal() {
     setModalAbierto(false);

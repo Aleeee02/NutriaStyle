@@ -1,31 +1,81 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { api } from "../../lib/api";
+import { useRef, useState } from "react";
+import { api, ApiError } from "../../lib/api";
 import type { UsuarioAdmin } from "../../lib/types";
+
+type UsuariosData = { usuarios: UsuarioAdmin[]; sellos_meta: number };
+const USUARIOS_KEY = ["admin", "usuarios"];
 
 export default function AdminUsuarios() {
   const queryClient = useQueryClient();
+  const [error, setError] = useState<string | null>(null);
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["admin", "usuarios"],
-    queryFn: () => api.get<{ usuarios: UsuarioAdmin[]; sellos_meta: number }>("/admin/usuarios"),
+    queryKey: USUARIOS_KEY,
+    queryFn: () => api.get<UsuariosData>("/admin/usuarios"),
   });
 
-  function invalidate() {
-    queryClient.invalidateQueries({ queryKey: ["admin", "usuarios"] });
+  // Cada accion se refleja en pantalla al instante y la peticion corre por
+  // detras (el servidor tarda ~1-2 s). Si falla, se recarga la lista real.
+  // Solo se vuelve a pedir la lista cuando no queda ninguna accion en curso:
+  // con varios clics seguidos, recargar a mitad haria "saltar" el contador.
+  const pendientes = useRef(0);
+
+  function editarLocal(id: string, cambio: (u: UsuarioAdmin, meta: number) => Partial<UsuarioAdmin>) {
+    queryClient.setQueryData<UsuariosData>(USUARIOS_KEY, (prev) =>
+      prev && {
+        ...prev,
+        usuarios: prev.usuarios.map((u) => {
+          if (u.id !== id) return u;
+          const actualizado = { ...u, ...cambio(u, prev.sellos_meta) };
+          actualizado.faltan = Math.max(0, prev.sellos_meta - actualizado.sellos);
+          actualizado.listo_para_canjear = actualizado.sellos >= prev.sellos_meta;
+          return actualizado;
+        }),
+      }
+    );
   }
 
-  async function agregarSello(id: string) {
-    await api.post(`/admin/usuarios/${id}/sello`);
-    invalidate();
+  async function ejecutar(cambioLocal: () => void, peticion: () => Promise<unknown>, mensajeError: string) {
+    setError(null);
+    pendientes.current += 1;
+    // Primero se cancela cualquier recarga en vuelo (si llegara despues,
+    // pisaria el cambio optimista) y recien entonces se aplica el cambio.
+    await queryClient.cancelQueries({ queryKey: USUARIOS_KEY });
+    cambioLocal();
+    try {
+      await peticion();
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : mensajeError);
+    } finally {
+      pendientes.current -= 1;
+      if (pendientes.current === 0) {
+        queryClient.invalidateQueries({ queryKey: USUARIOS_KEY });
+      }
+    }
   }
 
-  async function canjear(id: string) {
-    await api.post(`/admin/usuarios/${id}/canjear`);
-    invalidate();
+  function agregarSello(id: string) {
+    ejecutar(
+      () => editarLocal(id, (u) => ({ sellos: u.sellos + 1 })),
+      () => api.post(`/admin/usuarios/${id}/sello`),
+      "No se pudo agregar el sello."
+    );
   }
 
-  async function cambiarRol(id: string, rol: string) {
-    await api.put(`/admin/usuarios/${id}/rol`, { rol });
-    invalidate();
+  function canjear(id: string) {
+    ejecutar(
+      () => editarLocal(id, (u, meta) => ({ sellos: Math.max(0, u.sellos - meta) })),
+      () => api.post(`/admin/usuarios/${id}/canjear`),
+      "No se pudo canjear."
+    );
+  }
+
+  function cambiarRol(id: string, rol: string) {
+    ejecutar(
+      () => editarLocal(id, () => ({ rol })),
+      () => api.put(`/admin/usuarios/${id}/rol`, { rol }),
+      "No se pudo cambiar el rol."
+    );
   }
 
   // Los admin se muestran como etiqueta fija: ese rol solo se cambia en Supabase.
@@ -56,6 +106,12 @@ export default function AdminUsuarios() {
           Clientes registrados y su progreso en la tarjeta de fidelización ({data?.sellos_meta ?? 4} sellos para el corte de cortesía).
         </p>
       </div>
+
+      {error && (
+        <div className="p-space-sm rounded-lg bg-error-container/20 border border-error/40 text-error font-body-sm text-body-sm">
+          {error} Se recargaron los datos reales.
+        </div>
+      )}
 
       {isLoading ? (
         <p className="font-body-md text-body-md text-on-surface-variant">Cargando usuarios…</p>

@@ -1,6 +1,6 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { api } from "../../lib/api";
+import { api, ApiError } from "../../lib/api";
 import { ESTADOS_RESERVA, type Reserva } from "../../lib/types";
 
 export default function AdminReservas() {
@@ -12,14 +12,32 @@ export default function AdminReservas() {
     queryFn: () => api.get<Reserva[]>(`/admin/reservas${estadoFiltro ? `?estado=${estadoFiltro}` : ""}`),
   });
 
+  const [error, setError] = useState<string | null>(null);
+
+  // El nuevo estado se ve al instante; la peticion va por detras y, al
+  // terminar (bien o mal), se recarga la lista para quedar en sintonia.
   async function cambiarEstado(id: string, estado: string) {
-    await api.post(`/admin/reservas/${id}/estado`, { estado });
-    queryClient.invalidateQueries({ queryKey: ["admin", "reservas"] });
+    setError(null);
+    const key = ["admin", "reservas", estadoFiltro];
+    await queryClient.cancelQueries({ queryKey: ["admin", "reservas"] });
+    queryClient.setQueryData<Reserva[]>(key, (prev) => prev?.map((r) => (r.id === id ? { ...r, estado } : r)));
+    try {
+      await api.post(`/admin/reservas/${id}/estado`, { estado });
+    } catch (err) {
+      setError(err instanceof ApiError ? err.message : "No se pudo cambiar el estado.");
+    } finally {
+      queryClient.invalidateQueries({ queryKey: ["admin", "reservas"] });
+    }
   }
 
   return (
     <>
       <h1 className="font-headline-lg text-headline-lg text-on-surface font-bold">Reservas</h1>
+      {error && (
+        <div className="p-space-sm rounded-lg bg-error-container/20 border border-error/40 text-error font-body-sm text-body-sm">
+          {error}
+        </div>
+      )}
 
       <div className="flex items-center gap-space-xs overflow-x-auto pb-space-xs">
         <button

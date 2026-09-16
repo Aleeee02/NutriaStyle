@@ -15,6 +15,7 @@ from app.auth import (
     serialize_user,
 )
 from app.canjes import canjear_codigo, generar_codigo, vista_previa
+from app.concurrencia import en_paralelo
 from app.configuracion import get_configuracion
 from app.constants import SELLOS_META
 from app.disponibilidad import calcular_slots_disponibles, hora_fin_desde_inicio
@@ -222,34 +223,34 @@ def api_auth_session(body: SessionBody):
 @app.get("/api/fidelizacion/me")
 def api_fidelizacion_me(user=Depends(require_login)):
     admin = get_supabase_admin()
-
-    tarjeta_rows = admin.table("tarjetas_fidelizacion").select("*").eq("usuario_id", user.id).limit(1).execute().data
-    tarjeta = tarjeta_rows[0] if tarjeta_rows else None
-
     hoy = date.today().isoformat()
-    proxima_rows = (
-        admin.table("reservas")
-        .select("*, servicios(nombre), empleados(nombre, apellido)")
-        .eq("usuario_id", user.id)
-        .gte("fecha", hoy)
-        .in_("estado", ["pendiente", "confirmada"])
-        .order("fecha")
-        .order("hora_inicio")
-        .limit(1)
-        .execute()
-        .data
-    )
 
-    historial = (
-        admin.table("reservas")
-        .select("*, servicios(nombre, precio), empleados(nombre, apellido)")
-        .eq("usuario_id", user.id)
-        .order("fecha", desc=True)
-        .order("hora_inicio", desc=True)
-        .limit(10)
-        .execute()
-        .data
+    tarjeta_rows, proxima_rows, historial = en_paralelo(
+        lambda: admin.table("tarjetas_fidelizacion").select("*").eq("usuario_id", user.id).limit(1).execute().data,
+        lambda: (
+            admin.table("reservas")
+            .select("*, servicios(nombre), empleados(nombre, apellido)")
+            .eq("usuario_id", user.id)
+            .gte("fecha", hoy)
+            .in_("estado", ["pendiente", "confirmada"])
+            .order("fecha")
+            .order("hora_inicio")
+            .limit(1)
+            .execute()
+            .data
+        ),
+        lambda: (
+            admin.table("reservas")
+            .select("*, servicios(nombre, precio), empleados(nombre, apellido)")
+            .eq("usuario_id", user.id)
+            .order("fecha", desc=True)
+            .order("hora_inicio", desc=True)
+            .limit(10)
+            .execute()
+            .data
+        ),
     )
+    tarjeta = tarjeta_rows[0] if tarjeta_rows else None
 
     return {
         "tarjeta": tarjeta,
@@ -258,6 +259,22 @@ def api_fidelizacion_me(user=Depends(require_login)):
         "historial": historial,
         "codigo_canje": generar_codigo(tarjeta),
     }
+
+
+@app.get("/api/fidelizacion/codigo")
+def api_fidelizacion_codigo(user=Depends(require_login)):
+    """Version liviana para consultar seguido mientras el QR esta en pantalla."""
+    rows = (
+        get_supabase_admin()
+        .table("tarjetas_fidelizacion")
+        .select("id, sellos")
+        .eq("usuario_id", user.id)
+        .limit(1)
+        .execute()
+        .data
+    )
+    tarjeta = rows[0] if rows else None
+    return {"sellos": tarjeta["sellos"] if tarjeta else 0, "codigo_canje": generar_codigo(tarjeta)}
 
 
 # ---------- Canje con QR (admin o barbero) ----------

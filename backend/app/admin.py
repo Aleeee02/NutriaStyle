@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.auth import require_admin
+from app.auth import olvidar_rol, require_admin
 from app.canjes import canjear_tarjeta
+from app.concurrencia import en_paralelo
 from app.constants import SELLOS_META
 from app.schemas import ConfiguracionBody, EmpleadoBody, EstadoReservaBody, HorarioBody, RolBody, ServicioBody
 from app.supabase_client import get_supabase_admin
@@ -190,8 +191,10 @@ def admin_horario_eliminar(empleado_id: str, horario_id: str):
 @router.get("/usuarios")
 def admin_usuarios_list():
     admin = get_supabase_admin()
-    usuarios = admin.table("usuarios").select("*").order("fecha_registro", desc=True).execute().data
-    tarjetas = admin.table("tarjetas_fidelizacion").select("*").execute().data
+    usuarios, tarjetas = en_paralelo(
+        lambda: admin.table("usuarios").select("*").order("fecha_registro", desc=True).execute().data,
+        lambda: admin.table("tarjetas_fidelizacion").select("id, usuario_id, sellos, nivel").execute().data,
+    )
     tarjeta_por_usuario = {t["usuario_id"]: t for t in tarjetas}
 
     for u in usuarios:
@@ -207,17 +210,29 @@ def admin_usuarios_list():
 @router.post("/usuarios/{usuario_id}/sello")
 def admin_usuario_agregar_sello(usuario_id: str):
     admin = get_supabase_admin()
-    tarjeta = admin.table("tarjetas_fidelizacion").select("*").eq("usuario_id", usuario_id).limit(1).execute().data
-    if not tarjeta:
-        admin.table("tarjetas_fidelizacion").insert({"usuario_id": usuario_id, "sellos": 1}).execute()
-        tarjeta_id = (
-            admin.table("tarjetas_fidelizacion").select("id").eq("usuario_id", usuario_id).single().execute().data["id"]
-        )
-        nuevo_total = 1
-    else:
+
+    # El update exige que los sellos sigan siendo los leidos. Sin eso, dos
+    # clics seguidos leian el mismo valor y uno de los sellos se perdia.
+    for _ in range(5):
+        tarjeta = admin.table("tarjetas_fidelizacion").select("id, sellos").eq("usuario_id", usuario_id).limit(1).execute().data
+        if not tarjeta:
+            creada = admin.table("tarjetas_fidelizacion").insert({"usuario_id": usuario_id, "sellos": 1}).execute().data
+            tarjeta_id, nuevo_total = creada[0]["id"], 1
+            break
         nuevo_total = tarjeta[0]["sellos"] + 1
-        admin.table("tarjetas_fidelizacion").update({"sellos": nuevo_total}).eq("usuario_id", usuario_id).execute()
-        tarjeta_id = tarjeta[0]["id"]
+        actualizado = (
+            admin.table("tarjetas_fidelizacion")
+            .update({"sellos": nuevo_total})
+            .eq("id", tarjeta[0]["id"])
+            .eq("sellos", tarjeta[0]["sellos"])
+            .execute()
+            .data
+        )
+        if actualizado:
+            tarjeta_id = tarjeta[0]["id"]
+            break
+    else:
+        raise HTTPException(status_code=409, detail="La tarjeta cambió mientras se sellaba. Inténtalo de nuevo.")
 
     admin.table("movimientos_fidelizacion").insert(
         {"tarjeta_id": tarjeta_id, "tipo": "ganancia", "cantidad": 1, "descripcion": "Sello agregado por el salón"}
@@ -254,6 +269,7 @@ def admin_usuario_cambiar_rol(usuario_id: str, body: RolBody):
         raise HTTPException(status_code=400, detail="No se puede cambiar el rol de un administrador desde el panel")
 
     admin.table("usuarios").update({"rol": body.rol}).eq("id", usuario_id).execute()
+    olvidar_rol(usuario_id)
     return {"rol": body.rol}
 
 
