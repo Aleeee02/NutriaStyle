@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { EstadoCarga } from "../../components/EstadoCarga";
 import { useState } from "react";
 import { api, ApiError } from "../../lib/api";
 import { ESTADOS_RESERVA, type Reserva } from "../../lib/types";
@@ -7,7 +8,7 @@ export default function AdminReservas() {
   const queryClient = useQueryClient();
   const [estadoFiltro, setEstadoFiltro] = useState("");
 
-  const { data: reservas } = useQuery({
+  const { data: reservas, isPending, isError, refetch } = useQuery({
     queryKey: ["admin", "reservas", estadoFiltro],
     queryFn: () => api.get<Reserva[]>(`/admin/reservas${estadoFiltro ? `?estado=${estadoFiltro}` : ""}`),
   });
@@ -63,7 +64,9 @@ export default function AdminReservas() {
         ))}
       </div>
 
-      {!reservas || reservas.length === 0 ? (
+      {isPending || isError ? (
+        <EstadoCarga cargando={isPending} error={isError} reintentar={refetch} texto="Cargando reservas…" />
+      ) : !reservas || reservas.length === 0 ? (
         <p className="font-body-md text-body-md text-on-surface-variant">No hay reservas para mostrar.</p>
       ) : (
         <div className="w-full overflow-x-auto bg-surface-container-low rounded-xl shadow-lg">

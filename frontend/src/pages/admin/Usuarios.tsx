@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { EstadoCarga } from "../../components/EstadoCarga";
 import { useRef, useState } from "react";
 import { api, ApiError } from "../../lib/api";
 import type { UsuarioAdmin } from "../../lib/types";
@@ -9,7 +10,7 @@ const USUARIOS_KEY = ["admin", "usuarios"];
 export default function AdminUsuarios() {
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
-  const { data, isLoading, isError } = useQuery({
+  const { data, isPending, isError, refetch } = useQuery({
     queryKey: USUARIOS_KEY,
     queryFn: () => api.get<UsuariosData>("/admin/usuarios"),
   });
@@ -113,10 +114,8 @@ export default function AdminUsuarios() {
         </div>
       )}
 
-      {isLoading ? (
-        <p className="font-body-md text-body-md text-on-surface-variant">Cargando usuarios…</p>
-      ) : isError ? (
-        <p className="font-body-md text-body-md text-error">No se pudieron cargar los usuarios. Recarga la página.</p>
+      {isPending || isError ? (
+        <EstadoCarga cargando={isPending} error={isError} reintentar={refetch} texto="Cargando usuarios…" />
       ) : !data || data.usuarios.length === 0 ? (
         <p className="font-body-md text-body-md text-on-surface-variant">Todavía no hay usuarios registrados.</p>
       ) : (

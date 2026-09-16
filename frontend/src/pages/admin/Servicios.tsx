@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { EstadoCarga } from "../../components/EstadoCarga";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import { soles } from "../../lib/moneda";
@@ -6,7 +7,7 @@ import type { Servicio } from "../../lib/types";
 
 export default function AdminServicios() {
   const queryClient = useQueryClient();
-  const { data: servicios } = useQuery({
+  const { data: servicios, isPending, isError, refetch } = useQuery({
     queryKey: ["admin", "servicios"],
     queryFn: () => api.get<Servicio[]>("/admin/servicios"),
   });
@@ -28,7 +29,9 @@ export default function AdminServicios() {
         </Link>
       </div>
 
-      {!servicios || servicios.length === 0 ? (
+      {isPending || isError ? (
+        <EstadoCarga cargando={isPending} error={isError} reintentar={refetch} texto="Cargando servicios…" />
+      ) : !servicios || servicios.length === 0 ? (
         <p className="font-body-md text-body-md text-on-surface-variant">Todavía no hay servicios cargados.</p>
       ) : (
         <div className="w-full overflow-x-auto bg-surface-container-low rounded-xl shadow-lg">

@@ -12,7 +12,7 @@ export default function Canjear() {
   const [estado, setEstado] = useState<"pendiente" | "canjeando" | "canjeado">("pendiente");
   const [errorCanje, setErrorCanje] = useState<string | null>(null);
 
-  const { data, error, isLoading } = useQuery({
+  const { data, error, isPending } = useQuery({
     queryKey: ["canje", codigo],
     queryFn: () => api.get<CanjeVistaPrevia>(`/canje?codigo=${encodeURIComponent(codigo)}`),
     enabled: codigo !== "" && estado === "pendiente",
@@ -44,7 +44,7 @@ export default function Canjear() {
               El corte de cortesía de <strong className="text-primary">{nombreCliente}</strong> quedó registrado. Su tarjeta vuelve a empezar y este QR ya no sirve.
             </p>
           </>
-        ) : isLoading ? (
+        ) : codigo && isPending ? (
           <span className="material-symbols-outlined text-primary text-[40px] animate-spin">progress_activity</span>
         ) : invalido ? (
           <>

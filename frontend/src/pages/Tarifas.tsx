@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { EstadoCarga } from "../components/EstadoCarga";
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
@@ -7,7 +8,7 @@ import type { Categoria, Configuracion, Servicio } from "../lib/types";
 
 export default function Tarifas() {
   const { data: categorias } = useQuery({ queryKey: ["categorias"], queryFn: () => api.get<Categoria[]>("/categorias") });
-  const { data: servicios } = useQuery({ queryKey: ["servicios"], queryFn: () => api.get<Servicio[]>("/servicios") });
+  const { data: servicios, isPending, isError, refetch } = useQuery({ queryKey: ["servicios"], queryFn: () => api.get<Servicio[]>("/servicios") });
   const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
   const [filtro, setFiltro] = useState<string>("todos");
 
@@ -62,7 +63,13 @@ export default function Tarifas() {
           </Link>
         </div>
 
-        {grupos.length === 0 ? (
+        {isPending || isError ? (
+          <section className="w-full px-margin-mobile md:px-margin-desktop py-space-3xl">
+            <div className="max-w-[1280px] mx-auto">
+              <EstadoCarga cargando={isPending} error={isError} reintentar={refetch} texto="Cargando servicios…" />
+            </div>
+          </section>
+        ) : grupos.length === 0 ? (
           <section className="w-full px-margin-mobile md:px-margin-desktop py-space-3xl">
             <p className="max-w-[1280px] mx-auto font-body-md text-body-md text-on-surface-variant">
               Todavía no hay servicios publicados. Vuelve pronto.

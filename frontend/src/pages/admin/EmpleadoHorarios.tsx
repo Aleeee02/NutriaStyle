@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { EstadoCarga } from "../../components/EstadoCarga";
 import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { api } from "../../lib/api";
@@ -9,7 +10,7 @@ export default function AdminEmpleadoHorarios() {
   const queryClient = useQueryClient();
 
   const { data: empleado } = useQuery({ queryKey: ["admin", "empleados", id], queryFn: () => api.get<Empleado>(`/admin/empleados/${id}`) });
-  const { data: horarios } = useQuery({
+  const { data: horarios, isPending, isError, refetch } = useQuery({
     queryKey: ["admin", "empleados", id, "horarios"],
     queryFn: () => api.get<Horario[]>(`/admin/empleados/${id}/horarios`),
   });
@@ -48,7 +49,9 @@ export default function AdminEmpleadoHorarios() {
         </h1>
       </div>
 
-      {!horarios || horarios.length === 0 ? (
+      {isPending || isError ? (
+        <EstadoCarga cargando={isPending} error={isError} reintentar={refetch} texto="Cargando horarios…" />
+      ) : !horarios || horarios.length === 0 ? (
         <p className="font-body-md text-body-md text-on-surface-variant">Todavía no tiene horarios cargados.</p>
       ) : (
         <div className="flex flex-col gap-space-xs">

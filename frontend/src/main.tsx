@@ -22,7 +22,14 @@ const queryClient = new QueryClient({
   }),
   defaultOptions: {
     queries: {
-      retry: false,
+      // Reintenta solo fallos de red o del servidor (5xx), con espera creciente:
+      // cubre el arranque en frio de Render y cortes momentaneos. Los 4xx
+      // (sin sesion, no autorizado, no encontrado) no mejoran reintentando.
+      retry: (intentos, error) => {
+        if (error instanceof ApiError && error.status < 500) return false;
+        return intentos < 4;
+      },
+      retryDelay: (intento) => Math.min(1500 * 2 ** intento, 10000),
       refetchOnWindowFocus: false,
     },
   },

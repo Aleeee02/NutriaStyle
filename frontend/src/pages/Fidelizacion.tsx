@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { EstadoCarga } from "../components/EstadoCarga";
 import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
@@ -13,7 +14,7 @@ export default function Fidelizacion() {
   const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
   const comoLlegar = urlComoLlegar();
   const queryClient = useQueryClient();
-  const { data } = useQuery({
+  const { data, isPending, isError, refetch } = useQuery({
     queryKey: ["fidelizacion", "me"],
     queryFn: () => api.get<FidelizacionData>("/fidelizacion/me"),
   });
@@ -242,7 +243,9 @@ export default function Fidelizacion() {
             <h3 className="font-headline-sm text-headline-sm text-on-surface font-semibold">Historial de Reservas</h3>
             <p className="font-body-sm text-body-sm text-on-surface-variant">Tus últimas citas agendadas en Nutria Style.</p>
           </div>
-          {!data?.historial || data.historial.length === 0 ? (
+          {isPending || isError ? (
+            <EstadoCarga cargando={isPending} error={isError} reintentar={refetch} texto="Cargando tu historial…" />
+          ) : !data?.historial || data.historial.length === 0 ? (
             <p className="font-body-md text-body-md text-on-surface-variant">Aún no tienes reservas registradas.</p>
           ) : (
             <div className="w-full overflow-x-auto">

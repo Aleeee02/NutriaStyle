@@ -1,10 +1,11 @@
 import { useQuery } from "@tanstack/react-query";
+import { EstadoCarga } from "../components/EstadoCarga";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import type { Empleado } from "../lib/types";
 
 export default function Barberos() {
-  const { data: empleados, isLoading } = useQuery({
+  const { data: empleados, isPending, isError, refetch } = useQuery({
     queryKey: ["empleados"],
     queryFn: () => api.get<Empleado[]>("/empleados"),
   });
@@ -32,7 +33,11 @@ export default function Barberos() {
               </p>
             </div>
 
-            {!isLoading && (!empleados || empleados.length === 0) && (
+            {(isPending || isError) && (
+              <EstadoCarga cargando={isPending} error={isError} reintentar={refetch} texto="Cargando barberos…" />
+            )}
+
+            {!isPending && !isError && (!empleados || empleados.length === 0) && (
               <p className="font-body-md text-body-md text-on-surface-variant bg-surface-container-low p-space-lg rounded-xl">
                 Todavía no hay barberos publicados.
               </p>

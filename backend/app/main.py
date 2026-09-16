@@ -56,6 +56,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.middleware("http")
+async def sin_cache_en_api(request: Request, call_next):
+    # Vercel reenvia /api/* a Render y, desde 2026, respeta los encabezados de
+    # cache de estas respuestas. La API devuelve datos personales y del panel,
+    # que nunca deben guardarse en la CDN ni en el navegador.
+    response = await call_next(request)
+    if request.url.path.startswith("/api/"):
+        response.headers["Cache-Control"] = "no-store"
+    return response
+
+
 app.include_router(admin_router)
 
 SESSION_MAX_AGE = 60 * 60 * 24 * 7  # 7 dias

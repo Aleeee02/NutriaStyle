@@ -1,4 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { EstadoCarga } from "../components/EstadoCarga";
 import { useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { api, ApiError } from "../lib/api";
@@ -12,8 +13,10 @@ const STEP_LABELS = ["Servicio", "Maestro", "Fecha y Hora", "Confirmación"];
 export default function Reservas() {
   const queryClient = useQueryClient();
   const { data: categorias } = useQuery({ queryKey: ["categorias"], queryFn: () => api.get<Categoria[]>("/categorias") });
-  const { data: servicios } = useQuery({ queryKey: ["servicios"], queryFn: () => api.get<Servicio[]>("/servicios") });
-  const { data: empleados } = useQuery({ queryKey: ["empleados"], queryFn: () => api.get<Empleado[]>("/empleados") });
+  const serviciosQuery = useQuery({ queryKey: ["servicios"], queryFn: () => api.get<Servicio[]>("/servicios") });
+  const servicios = serviciosQuery.data;
+  const empleadosQuery = useQuery({ queryKey: ["empleados"], queryFn: () => api.get<Empleado[]>("/empleados") });
+  const empleados = empleadosQuery.data;
   const { data: config } = useQuery({ queryKey: ["config"], queryFn: () => api.get<Configuracion>("/config") });
   const comoLlegar = urlComoLlegar();
 
@@ -204,7 +207,14 @@ export default function Reservas() {
                   ))}
                 </div>
               )}
-              {serviciosFiltrados.length === 0 ? (
+              {serviciosQuery.isPending || serviciosQuery.isError ? (
+                <EstadoCarga
+                  cargando={serviciosQuery.isPending}
+                  error={serviciosQuery.isError}
+                  reintentar={serviciosQuery.refetch}
+                  texto="Cargando servicios…"
+                />
+              ) : serviciosFiltrados.length === 0 ? (
                 <p className="font-body-md text-body-md text-on-surface-variant bg-surface-container-low p-space-lg rounded-xl">
                   Todavía no hay servicios publicados.
                 </p>
@@ -260,7 +270,14 @@ export default function Reservas() {
                 <span className="font-label-sm text-label-sm text-secondary uppercase tracking-widest block">Paso 2 de 4</span>
                 <h2 className="font-headline-md text-headline-md text-on-surface">Selecciona a tu Barbero</h2>
               </div>
-              {!empleados || empleados.length === 0 ? (
+              {empleadosQuery.isPending || empleadosQuery.isError ? (
+                <EstadoCarga
+                  cargando={empleadosQuery.isPending}
+                  error={empleadosQuery.isError}
+                  reintentar={empleadosQuery.refetch}
+                  texto="Cargando barberos…"
+                />
+              ) : !empleados || empleados.length === 0 ? (
                 <p className="font-body-md text-body-md text-on-surface-variant bg-surface-container-low p-space-lg rounded-xl">
                   Todavía no hay barberos publicados.
                 </p>

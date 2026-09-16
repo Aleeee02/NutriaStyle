@@ -1,11 +1,12 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { EstadoCarga } from "../../components/EstadoCarga";
 import { Link } from "react-router-dom";
 import { api } from "../../lib/api";
 import type { Empleado } from "../../lib/types";
 
 export default function AdminEmpleados() {
   const queryClient = useQueryClient();
-  const { data: empleados } = useQuery({
+  const { data: empleados, isPending, isError, refetch } = useQuery({
     queryKey: ["admin", "empleados"],
     queryFn: () => api.get<Empleado[]>("/admin/empleados"),
   });
@@ -27,7 +28,9 @@ export default function AdminEmpleados() {
         </Link>
       </div>
 
-      {!empleados || empleados.length === 0 ? (
+      {isPending || isError ? (
+        <EstadoCarga cargando={isPending} error={isError} reintentar={refetch} texto="Cargando empleados…" />
+      ) : !empleados || empleados.length === 0 ? (
         <p className="font-body-md text-body-md text-on-surface-variant">Todavía no hay empleados cargados.</p>
       ) : (
         <div className="w-full overflow-x-auto bg-surface-container-low rounded-xl shadow-lg">
