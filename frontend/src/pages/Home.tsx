@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { urlComoLlegar, urlMapaEmbebido } from "../lib/mapa";
+import { soles } from "../lib/moneda";
 import { COMBOS, DESCUENTO_FFAA_PNP } from "../lib/promociones";
 import type { Configuracion } from "../lib/types";
 
@@ -187,7 +188,7 @@ export default function Home() {
                   <span className="font-body-sm text-body-sm text-on-surface-variant">
                     {combo.incluye.slice(1).map((i) => `+ ${i}`).join(" ")} + bebida
                   </span>
-                  <span className="mt-auto font-headline-lg text-headline-lg text-primary">S/ {combo.precio}</span>
+                  <span className="mt-auto font-headline-lg text-headline-lg text-primary">{soles(combo.precio)}</span>
                 </Link>
               ))}
               <Link

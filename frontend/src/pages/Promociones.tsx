@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { urlComoLlegar } from "../lib/mapa";
+import { soles } from "../lib/moneda";
 import { COMBOS, DESCUENTO_FFAA_PNP, NOTA_NO_ACUMULABLE } from "../lib/promociones";
 import type { Configuracion } from "../lib/types";
 
@@ -55,7 +56,7 @@ export default function Promociones() {
                   </div>
                   <div className="flex flex-col items-end shrink-0">
                     <span className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">A solo</span>
-                    <span className="font-headline-xl text-headline-xl text-primary leading-none">S/ {combo.precio}</span>
+                    <span className="font-headline-xl text-headline-xl text-primary leading-none">{soles(combo.precio)}</span>
                   </div>
                 </div>
                 <ul className="relative flex flex-col gap-space-xs">
