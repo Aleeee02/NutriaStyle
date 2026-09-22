@@ -81,6 +81,20 @@ export interface FidelizacionData {
   proxima_cita: Reserva | null;
   historial: Reserva[];
   codigo_canje: string | null;
+  codigo_asistencia: string | null;
+}
+
+export interface AsistenciaVistaPrevia {
+  reserva_id: string;
+  cliente: string;
+  email: string | null;
+  servicio: string | null;
+  precio: number | null;
+  barbero: string;
+  fecha: string;
+  hora_inicio: string;
+  estado: string;
+  sellos: number;
 }
 
 export interface CanjeVistaPrevia {

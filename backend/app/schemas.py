@@ -22,6 +22,11 @@ class CanjeBody(BaseModel):
     codigo: str
 
 
+class AsistenciaBody(BaseModel):
+    codigo: str
+    asistio: bool
+
+
 class RolBody(BaseModel):
     rol: str
 

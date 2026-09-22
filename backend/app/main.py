@@ -1,6 +1,5 @@
 import os
 import urllib.parse
-from datetime import date
 
 from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,14 +13,22 @@ from app.auth import (
     require_staff,
     serialize_user,
 )
+from app.asistencias import (
+    cancelar_reserva,
+    generar_codigo as generar_codigo_asistencia,
+    marcar_no_asistidas,
+    registrar as registrar_asistencia,
+    vista_previa as vista_previa_asistencia,
+)
 from app.canjes import canjear_codigo, generar_codigo, vista_previa
 from app.concurrencia import en_paralelo
 from app.configuracion import get_configuracion
 from app.constants import SELLOS_META
 from app.disponibilidad import calcular_slots_disponibles, hora_fin_desde_inicio
 from app.profiles import ensure_user_profile
-from app.schemas import CanjeBody, LoginBody, PerfilBody, RegistroBody, ReservaCreateBody, SessionBody
+from app.schemas import AsistenciaBody, CanjeBody, LoginBody, PerfilBody, RegistroBody, ReservaCreateBody, SessionBody
 from app.supabase_client import SUPABASE_URL, get_supabase, get_supabase_admin
+from app.tiempo import hoy_iso
 
 # URL del frontend (React en Vercel). En local, el proxy de Vite hace que
 # todo sea "same-origin" y esto no se usa para las llamadas normales, pero
@@ -234,7 +241,9 @@ def api_auth_session(body: SessionBody):
 @app.get("/api/fidelizacion/me")
 def api_fidelizacion_me(user=Depends(require_login)):
     admin = get_supabase_admin()
-    hoy = date.today().isoformat()
+    # Las citas vencidas pasan solas a "no asistio" antes de armar la respuesta.
+    marcar_no_asistidas()
+    hoy = hoy_iso()
 
     tarjeta_rows, proxima_rows, historial = en_paralelo(
         lambda: admin.table("tarjetas_fidelizacion").select("*").eq("usuario_id", user.id).limit(1).execute().data,
@@ -269,6 +278,7 @@ def api_fidelizacion_me(user=Depends(require_login)):
         "proxima_cita": proxima_rows[0] if proxima_rows else None,
         "historial": historial,
         "codigo_canje": generar_codigo(tarjeta),
+        "codigo_asistencia": generar_codigo_asistencia(proxima_rows[0] if proxima_rows else None),
     }
 
 
@@ -286,6 +296,24 @@ def api_fidelizacion_codigo(user=Depends(require_login)):
     )
     tarjeta = rows[0] if rows else None
     return {"sellos": tarjeta["sellos"] if tarjeta else 0, "codigo_canje": generar_codigo(tarjeta)}
+
+
+# ---------- Asistencia a la cita (QR que muestra el cliente) ----------
+
+
+@app.get("/api/asistencia")
+def api_asistencia_vista_previa(codigo: str, user=Depends(require_staff)):
+    return vista_previa_asistencia(codigo)
+
+
+@app.post("/api/asistencia")
+def api_asistencia_registrar(body: AsistenciaBody, user=Depends(require_staff)):
+    return registrar_asistencia(body.codigo, asistio=body.asistio)
+
+
+@app.post("/api/reservas/{reserva_id}/cancelar")
+def api_reserva_cancelar(reserva_id: str, user=Depends(require_login)):
+    return cancelar_reserva(reserva_id, user.id)
 
 
 # ---------- Canje con QR (admin o barbero) ----------

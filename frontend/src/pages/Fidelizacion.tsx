@@ -4,7 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 import { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
-import { api } from "../lib/api";
+import { api, ApiError } from "../lib/api";
 import { urlComoLlegar } from "../lib/mapa";
 import type { Configuracion, FidelizacionData } from "../lib/types";
 
@@ -41,6 +41,27 @@ export default function Fidelizacion() {
       queryClient.invalidateQueries({ queryKey: ["fidelizacion", "me"] });
     }
   }, [codigo, modalAbierto, queryClient]);
+
+  const urlCita = data?.codigo_asistencia
+    ? `${window.location.origin}/asistencia?c=${encodeURIComponent(data.codigo_asistencia)}`
+    : null;
+  const [modalCita, setModalCita] = useState(false);
+  const [cancelando, setCancelando] = useState(false);
+  const [errorCita, setErrorCita] = useState<string | null>(null);
+
+  async function cancelarCita(reservaId: string) {
+    if (!window.confirm("¿Seguro que quieres cancelar esta cita?")) return;
+    setErrorCita(null);
+    setCancelando(true);
+    try {
+      await api.post(`/reservas/${reservaId}/cancelar`);
+      queryClient.invalidateQueries({ queryKey: ["fidelizacion", "me"] });
+    } catch (err) {
+      setErrorCita(err instanceof ApiError ? err.message : "No se pudo cancelar la cita.");
+    } finally {
+      setCancelando(false);
+    }
+  }
 
   function cerrarModal() {
     setModalAbierto(false);
@@ -204,6 +225,27 @@ export default function Fidelizacion() {
                       <span className="material-symbols-outlined text-[18px]">directions</span>Cómo llegar
                     </a>
                   )}
+                  {errorCita && <span className="mt-space-xs font-body-sm text-body-sm text-error">{errorCita}</span>}
+                  <div className="mt-space-sm flex flex-wrap gap-space-xs">
+                    {urlCita && (
+                      <button
+                        className="inline-flex items-center gap-space-2xs px-space-md py-space-xs rounded-lg bg-primary text-on-primary font-label-md text-label-md uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors"
+                        onClick={() => setModalCita(true)}
+                        type="button"
+                      >
+                        <span className="material-symbols-outlined text-[18px]">qr_code_2</span>
+                        Mostrar QR de mi cita
+                      </button>
+                    )}
+                    <button
+                      className="inline-flex items-center gap-space-2xs px-space-md py-space-xs rounded-lg border border-outline-variant text-on-surface-variant font-label-md text-label-md uppercase tracking-wider hover:text-error hover:border-error transition-colors disabled:opacity-50"
+                      disabled={cancelando}
+                      onClick={() => cancelarCita(data.proxima_cita!.id)}
+                      type="button"
+                    >
+                      {cancelando ? "Cancelando…" : "Cancelar cita"}
+                    </button>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -281,6 +323,41 @@ export default function Fidelizacion() {
           )}
         </section>
       </div>
+
+      {modalCita && urlCita && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-space-md">
+          <div className="relative w-full max-w-lg bg-surface-container-lowest p-space-xl rounded-xl shadow-2xl flex flex-col gap-space-lg items-center text-center">
+            <button
+              aria-label="Cerrar"
+              className="absolute top-4 right-4 text-outline hover:text-on-surface transition-colors"
+              onClick={() => setModalCita(false)}
+              type="button"
+            >
+              <span className="material-symbols-outlined text-[24px]">close</span>
+            </button>
+            <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-bold">Tu cita</span>
+            <h3 className="font-headline-md text-headline-md text-primary font-bold">
+              {data?.proxima_cita?.servicios?.nombre ?? "Servicio"}
+            </h3>
+            <p className="font-body-sm text-body-sm text-on-surface-variant -mt-space-sm">
+              {data?.proxima_cita?.fecha} · {data?.proxima_cita?.hora_inicio.slice(0, 5)}h
+            </p>
+            <div className="bg-white p-space-md rounded-xl shadow-lg">
+              <QRCodeSVG value={urlCita} size={220} level="M" marginSize={0} />
+            </div>
+            <p className="font-body-sm text-body-sm text-on-surface-variant">
+              Muéstralo al llegar al salón: con este código registran tu asistencia.
+            </p>
+            <button
+              className="w-full py-space-sm rounded-lg bg-primary text-on-primary font-headline-sm text-[15px] font-bold uppercase tracking-wider hover:bg-primary-fixed-dim transition-colors"
+              onClick={() => setModalCita(false)}
+              type="button"
+            >
+              Cerrar
+            </button>
+          </div>
+        </div>
+      )}
 
       {modalAbierto && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-space-md">

@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import olvidar_rol, require_admin
+from app.asistencias import marcar_no_asistidas
 from app.canjes import canjear_tarjeta
 from app.concurrencia import en_paralelo
 from app.constants import SELLOS_META
@@ -279,6 +280,7 @@ def admin_usuario_cambiar_rol(usuario_id: str, body: RolBody):
 @router.get("/reservas")
 def admin_reservas_list(estado: str = ""):
     admin = get_supabase_admin()
+    marcar_no_asistidas()
     query = (
         admin.table("reservas")
         .select("*, usuarios(nombre, apellido, email), servicios(nombre), empleados(nombre, apellido)")

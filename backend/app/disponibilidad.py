@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from app.supabase_client import get_supabase_admin
+from app.tiempo import ahora as ahora_local
 
 SLOT_STEP_MINUTES = 15
 
@@ -53,7 +54,8 @@ def calcular_slots_disponibles(empleado_id: str, fecha_iso: str, duracion_minuto
         (hhmm_a_minutos(r["hora_inicio"]), hhmm_a_minutos(r["hora_fin"])) for r in reservas_existentes
     ]
 
-    ahora = datetime.now()
+    # Hora del salon (Iquitos), no la del servidor, que corre en UTC.
+    ahora = ahora_local()
     es_hoy = fecha_iso == ahora.strftime("%Y-%m-%d")
     minuto_actual = ahora.hour * 60 + ahora.minute
 
