@@ -23,8 +23,8 @@ export function Footer() {
               <span className="font-headline-sm text-headline-sm text-primary">{nombre}</span>
             </div>
             <p className="font-body-sm text-body-sm text-on-surface-variant">
-              Santuario de estilismo masculino, rituales tradicionales de afeitado con navaja y cuidado artesanal
-              exclusivo.
+              En el corazón de Iquitos, una barbería donde cada corte se trabaja sin apuro: tijera, navaja y el
+              pulso de quien conoce su oficio. Entras con una idea y sales con un estilo que te representa.
             </p>
             <div className="flex items-center gap-space-xs text-primary">
               <span className="material-symbols-outlined text-[18px]">verified</span>
@@ -115,7 +115,7 @@ export function Footer() {
         </div>
         <div className="mt-space-2xl pt-space-lg border-t border-outline-variant/20 flex flex-col md:flex-row items-center justify-between gap-space-md">
           <span className="font-body-sm text-body-sm text-outline">
-            © 2024 {nombre}. Tradición secular, precisión vanguardista.
+            © {new Date().getFullYear()} {nombre}. Tradición secular, precisión vanguardista.
           </span>
           <div className="flex items-center gap-space-md">
             <a className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="#">

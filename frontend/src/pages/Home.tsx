@@ -285,16 +285,6 @@ export default function Home() {
                     </a>
                   )}
                 </div>
-                <div className="pt-space-xs flex items-center gap-space-md text-outline font-body-sm text-body-sm">
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px] text-secondary">check</span> Cancelación
-                    flexible
-                  </span>
-                  <span className="flex items-center gap-1">
-                    <span className="material-symbols-outlined text-[16px] text-secondary">check</span> Parking
-                    concertado
-                  </span>
-                </div>
               </div>
             </div>
           </div>
