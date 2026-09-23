@@ -7,6 +7,7 @@ const ADMIN_LINKS = [
   { to: "/admin/empleados", label: "Empleados" },
   { to: "/admin/reservas", label: "Reservas" },
   { to: "/admin/usuarios", label: "Usuarios" },
+  { to: "/admin/resenas", label: "Reseñas" },
   { to: "/admin/configuracion", label: "Configuración" },
 ];
 

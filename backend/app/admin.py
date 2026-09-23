@@ -3,9 +3,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.auth import olvidar_rol, require_admin
 from app.asistencias import marcar_no_asistidas
 from app.canjes import canjear_tarjeta
+from app.resenas import cambiar_aprobacion, eliminar as eliminar_resena, listar_para_admin
 from app.concurrencia import en_paralelo
 from app.constants import SELLOS_META
-from app.schemas import ConfiguracionBody, EmpleadoBody, EstadoReservaBody, HorarioBody, RolBody, ServicioBody
+from app.schemas import AprobacionBody, ConfiguracionBody, EmpleadoBody, EstadoReservaBody, HorarioBody, RolBody, ServicioBody
 from app.supabase_client import get_supabase_admin
 
 router = APIRouter(prefix="/api/admin", dependencies=[Depends(require_admin)])
@@ -274,6 +275,24 @@ def admin_usuario_cambiar_rol(usuario_id: str, body: RolBody):
     return {"rol": body.rol}
 
 
+# ---------- Resenas ----------
+
+
+@router.get("/resenas")
+def admin_resenas_list():
+    return listar_para_admin()
+
+
+@router.post("/resenas/{resena_id}/aprobacion")
+def admin_resena_aprobacion(resena_id: str, body: AprobacionBody):
+    return cambiar_aprobacion(resena_id, body.aprobada)
+
+
+@router.delete("/resenas/{resena_id}")
+def admin_resena_eliminar(resena_id: str):
+    return eliminar_resena(resena_id)
+
+
 # ---------- Reservas ----------
 
 
@@ -324,9 +343,11 @@ def admin_configuracion_actualizar(body: ConfiguracionBody):
     try:
         fila = guardar(datos)
     except Exception as e:
-        # La columna tiktok_url se agrega con un ALTER TABLE en Supabase. Si
-        # todavia no existe, se guarda el resto en vez de fallar entero.
-        if "tiktok_url" not in str(e):
+        # Las columnas nuevas (tiktok_url, resenas_google_url) se agregan con
+        # un ALTER TABLE en Supabase. Si todavia no existen, se guarda el resto
+        # en vez de fallar entero.
+        faltantes = [c for c in ("tiktok_url", "resenas_google_url") if c in str(e)]
+        if not faltantes:
             raise
-        fila = guardar({k: v for k, v in datos.items() if k != "tiktok_url"})
+        fila = guardar({k: v for k, v in datos.items() if k not in faltantes})
     return fila[0]

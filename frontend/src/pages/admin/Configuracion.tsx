@@ -11,6 +11,7 @@ const EMPTY: Configuracion = {
   instagram_url: "",
   facebook_url: "",
   tiktok_url: "",
+  resenas_google_url: "",
   mision: "",
   vision: "",
 };
@@ -32,6 +33,7 @@ export default function AdminConfiguracion() {
         instagram_url: config.instagram_url ?? "",
         facebook_url: config.facebook_url ?? "",
         tiktok_url: config.tiktok_url ?? "",
+        resenas_google_url: config.resenas_google_url ?? "",
         mision: config.mision ?? "",
         vision: config.vision ?? "",
       });
@@ -119,6 +121,19 @@ export default function AdminConfiguracion() {
             value={form.tiktok_url ?? ""}
             onChange={update("tiktok_url")}
           />
+        </div>
+
+        <div className="flex flex-col gap-space-2xs">
+          <label className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Enlace para reseñar en Google (opcional)</label>
+          <input
+            className="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="https://g.page/r/..../review"
+            value={form.resenas_google_url ?? ""}
+            onChange={update("resenas_google_url")}
+          />
+          <span className="font-body-sm text-body-sm text-outline">
+            Lo copias desde tu Perfil de Empresa de Google (&quot;Pedir reseñas&quot;). Si lo dejas vacío, el botón abre tu ficha en Maps.
+          </span>
         </div>
 
         <div className="grid grid-cols-2 gap-space-sm">

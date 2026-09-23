@@ -1,4 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
+import { Resenas } from "../components/Resenas";
 import { EstadoCarga } from "../components/EstadoCarga";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
@@ -85,6 +86,8 @@ export default function Barberos() {
             </div>
           </div>
         </section>
+
+        <Resenas />
 
         <section className="w-full py-space-3xl px-margin-mobile md:px-margin-desktop bg-background relative">
           <div className="max-w-[1280px] mx-auto p-space-xl rounded-xl bg-surface-container-low shadow-xl flex flex-col md:flex-row items-center justify-between gap-space-lg">

@@ -5,6 +5,7 @@ const CARDS = [
   { to: "/admin/empleados", icon: "groups", title: "Empleados", desc: "Gestiona tu equipo de barberos y el horario semanal de cada uno." },
   { to: "/admin/usuarios", icon: "person", title: "Usuarios", desc: "Consulta tus clientes registrados y marca sellos de fidelización." },
   { to: "/admin/reservas", icon: "event_available", title: "Reservas", desc: "Ve la agenda completa y confirma, cancela o marca citas como completadas." },
+  { to: "/admin/resenas", icon: "reviews", title: "Reseñas", desc: "Revisa las reseñas de tus clientes y decide cuáles se publican en el sitio." },
   { to: "/admin/configuracion", icon: "settings", title: "Configuración", desc: "Datos del negocio: WhatsApp, dirección, horario y redes sociales." },
 ];
 

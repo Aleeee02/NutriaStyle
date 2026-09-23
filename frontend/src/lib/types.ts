@@ -112,6 +112,7 @@ export interface Configuracion {
   instagram_url: string | null;
   facebook_url: string | null;
   tiktok_url: string | null;
+  resenas_google_url: string | null;
   mision: string | null;
   vision: string | null;
 }
@@ -140,3 +141,36 @@ export const DIAS_SEMANA: Array<[number, string]> = [
 ];
 
 export const ESTADOS_RESERVA = ["pendiente", "confirmada", "completada", "cancelada", "no_asistio"];
+
+export interface Resena {
+  id: string;
+  autor: string;
+  calificacion: number;
+  comentario: string | null;
+  fecha: string;
+  barbero: string | null;
+}
+
+export interface ResenasPublicas {
+  promedio: number | null;
+  total: number;
+  items: Resena[];
+}
+
+export interface CitaCalificable {
+  reserva_id: string;
+  fecha: string;
+  hora_inicio: string;
+  servicio: string | null;
+  barbero: string;
+}
+
+export interface ResenaAdmin {
+  id: string;
+  calificacion: number;
+  comentario: string | null;
+  aprobada: boolean;
+  created_at: string;
+  usuarios: { nombre: string; apellido: string | null; email: string | null } | null;
+  empleados: { nombre: string; apellido: string | null } | null;
+}

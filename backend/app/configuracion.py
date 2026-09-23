@@ -8,6 +8,7 @@ _DEFAULTS = {
     "instagram_url": None,
     "facebook_url": None,
     "tiktok_url": None,
+    "resenas_google_url": None,
 }
 
 

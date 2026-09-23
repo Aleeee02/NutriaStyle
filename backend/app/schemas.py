@@ -27,6 +27,16 @@ class AsistenciaBody(BaseModel):
     asistio: bool
 
 
+class ResenaBody(BaseModel):
+    reserva_id: str
+    calificacion: int
+    comentario: str | None = None
+
+
+class AprobacionBody(BaseModel):
+    aprobada: bool
+
+
 class RolBody(BaseModel):
     rol: str
 
@@ -82,5 +92,6 @@ class ConfiguracionBody(BaseModel):
     instagram_url: str | None = None
     facebook_url: str | None = None
     tiktok_url: str | None = None
+    resenas_google_url: str | None = None
     mision: str | None = None
     vision: str | None = None

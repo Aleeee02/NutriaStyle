@@ -26,7 +26,17 @@ from app.configuracion import get_configuracion
 from app.constants import SELLOS_META
 from app.disponibilidad import calcular_slots_disponibles, hora_fin_desde_inicio
 from app.profiles import ensure_user_profile
-from app.schemas import AsistenciaBody, CanjeBody, LoginBody, PerfilBody, RegistroBody, ReservaCreateBody, SessionBody
+from app.resenas import citas_calificables, crear as crear_resena, listar_publicas
+from app.schemas import (
+    AsistenciaBody,
+    CanjeBody,
+    LoginBody,
+    PerfilBody,
+    RegistroBody,
+    ReservaCreateBody,
+    ResenaBody,
+    SessionBody,
+)
 from app.supabase_client import SUPABASE_URL, get_supabase, get_supabase_admin
 from app.tiempo import hoy_iso
 
@@ -305,6 +315,24 @@ def api_fidelizacion_codigo(user=Depends(require_login)):
     )
     tarjeta = rows[0] if rows else None
     return {"sellos": tarjeta["sellos"] if tarjeta else 0, "codigo_canje": generar_codigo(tarjeta)}
+
+
+# ---------- Resenas ----------
+
+
+@app.get("/api/resenas")
+def api_resenas():
+    return listar_publicas()
+
+
+@app.get("/api/resenas/calificables")
+def api_resenas_calificables(user=Depends(require_login)):
+    return citas_calificables(user.id)
+
+
+@app.post("/api/resenas")
+def api_resenas_crear(body: ResenaBody, user=Depends(require_login)):
+    return crear_resena(user.id, body.reserva_id, body.calificacion, body.comentario)
 
 
 # ---------- Asistencia a la cita (QR que muestra el cliente) ----------

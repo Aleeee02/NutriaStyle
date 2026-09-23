@@ -25,6 +25,7 @@ import AdminEmpleadoForm from "./pages/admin/EmpleadoForm";
 import AdminEmpleadoHorarios from "./pages/admin/EmpleadoHorarios";
 import AdminUsuarios from "./pages/admin/Usuarios";
 import AdminReservas from "./pages/admin/ReservasAdmin";
+import AdminResenas from "./pages/admin/ResenasAdmin";
 import AdminConfiguracion from "./pages/admin/Configuracion";
 
 export default function App() {
@@ -186,6 +187,16 @@ export default function App() {
           <RequireAdmin>
             <AdminLayout>
               <AdminReservas />
+            </AdminLayout>
+          </RequireAdmin>
+        }
+      />
+      <Route
+        path="/admin/resenas"
+        element={
+          <RequireAdmin>
+            <AdminLayout>
+              <AdminResenas />
             </AdminLayout>
           </RequireAdmin>
         }
