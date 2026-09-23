@@ -52,7 +52,16 @@ _SECURE_COOKIE = FRONTEND_ORIGIN.startswith("https://")
 # que registrar cada uno a mano, junto con localhost para desarrollo.
 CORS_ORIGIN_REGEX = r"https://nutria-?style[a-z0-9\-]*\.vercel\.app|http://localhost:\d+"
 
-app = FastAPI(title="Nutria Style API")
+# En produccion se apagan /docs, /redoc y /openapi.json: son utiles al
+# desarrollar, pero publican el mapa completo de la API a cualquiera.
+_ES_LOCAL = FRONTEND_ORIGIN.startswith("http://localhost")
+
+app = FastAPI(
+    title="Nutria Style API",
+    docs_url="/docs" if _ES_LOCAL else None,
+    redoc_url="/redoc" if _ES_LOCAL else None,
+    openapi_url="/openapi.json" if _ES_LOCAL else None,
+)
 
 app.add_middleware(
     CORSMiddleware,

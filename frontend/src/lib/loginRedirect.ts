@@ -21,7 +21,10 @@ export function destinoTrasLogin(user: CurrentUser): string {
     // idem
   }
   // Solo rutas internas, para no convertir esto en una redireccion abierta.
-  if (guardado && guardado.startsWith("/") && !guardado.startsWith("//")) {
+  // Se rechazan "//otro-sitio.com" y "/\otro-sitio.com": el navegador trata
+  // la barra invertida como barra normal y saldria del sitio.
+  const interna = /^\/(?![/\\])/.test(guardado ?? "");
+  if (guardado && interna) {
     return guardado;
   }
   return user.is_admin ? "/admin" : "/fidelizacion";
