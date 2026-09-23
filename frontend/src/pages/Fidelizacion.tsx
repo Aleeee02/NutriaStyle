@@ -197,8 +197,8 @@ export default function Fidelizacion() {
           </div>
         </section>
 
-        {/* Proxima cita y beneficios */}
-        <section className="grid grid-cols-1 lg:grid-cols-2 gap-space-lg items-start">
+        {/* Proxima cita */}
+        <section className="flex flex-col gap-space-lg">
           <div className="flex flex-col gap-space-sm bg-surface-container-low p-space-lg rounded-xl shadow-lg">
             <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary font-semibold">Cita en Agenda</span>
             {data?.proxima_cita ? (
@@ -256,26 +256,6 @@ export default function Fidelizacion() {
                 </Link>
               </>
             )}
-          </div>
-          <div className="flex flex-col gap-space-md bg-surface-container-low p-space-lg rounded-xl shadow-lg">
-            <div className="flex items-center justify-between">
-              <h3 className="font-headline-sm text-[18px] text-primary font-semibold">Beneficios Exclusivos del Club</h3>
-              <span className="material-symbols-outlined text-secondary text-[20px]">military_tech</span>
-            </div>
-            <ul className="flex flex-col gap-space-sm text-body-sm text-on-surface-variant">
-              <li className="flex items-start gap-space-xs">
-                <span className="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">local_bar</span>
-                <span><strong className="text-on-surface font-medium">Barra de Cortesía:</strong> Degustación gratuita de whisky escocés de malta o café arábica de origen en cada visita.</span>
-              </li>
-              <li className="flex items-start gap-space-xs">
-                <span className="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">shopping_bag</span>
-                <span><strong className="text-on-surface font-medium">Botica Nutria Style:</strong> 15% de descuento permanente en ceras, elixires botánicos y lociones post-afeitado.</span>
-              </li>
-              <li className="flex items-start gap-space-xs">
-                <span className="material-symbols-outlined text-primary text-[20px] shrink-0 mt-0.5">event_available</span>
-                <span><strong className="text-on-surface font-medium">Acceso VIP Fin de Semana:</strong> Prioridad absoluta y bloqueo de franjas reservadas los viernes y sábados.</span>
-              </li>
-            </ul>
           </div>
         </section>
 
