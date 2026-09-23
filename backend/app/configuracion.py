@@ -7,6 +7,7 @@ _DEFAULTS = {
     "horario": None,
     "instagram_url": None,
     "facebook_url": None,
+    "tiktok_url": None,
 }
 
 

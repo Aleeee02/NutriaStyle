@@ -315,8 +315,18 @@ def admin_configuracion_actualizar(body: ConfiguracionBody):
     datos = body.model_dump()
 
     existente = admin.table("configuracion").select("id").limit(1).execute().data
-    if existente:
-        fila = admin.table("configuracion").update(datos).eq("id", existente[0]["id"]).execute().data
-    else:
-        fila = admin.table("configuracion").insert(datos).execute().data
+
+    def guardar(valores: dict):
+        if existente:
+            return admin.table("configuracion").update(valores).eq("id", existente[0]["id"]).execute().data
+        return admin.table("configuracion").insert(valores).execute().data
+
+    try:
+        fila = guardar(datos)
+    except Exception as e:
+        # La columna tiktok_url se agrega con un ALTER TABLE en Supabase. Si
+        # todavia no existe, se guarda el resto en vez de fallar entero.
+        if "tiktok_url" not in str(e):
+            raise
+        fila = guardar({k: v for k, v in datos.items() if k != "tiktok_url"})
     return fila[0]

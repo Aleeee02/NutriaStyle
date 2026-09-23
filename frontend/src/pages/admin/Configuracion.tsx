@@ -10,6 +10,7 @@ const EMPTY: Configuracion = {
   horario: "",
   instagram_url: "",
   facebook_url: "",
+  tiktok_url: "",
   mision: "",
   vision: "",
 };
@@ -30,6 +31,7 @@ export default function AdminConfiguracion() {
         horario: config.horario ?? "",
         instagram_url: config.instagram_url ?? "",
         facebook_url: config.facebook_url ?? "",
+        tiktok_url: config.tiktok_url ?? "",
         mision: config.mision ?? "",
         vision: config.vision ?? "",
       });
@@ -106,6 +108,16 @@ export default function AdminConfiguracion() {
             placeholder="Lunes a Sábado, 09:00 - 20:00"
             value={form.horario ?? ""}
             onChange={update("horario")}
+          />
+        </div>
+
+        <div className="flex flex-col gap-space-2xs">
+          <label className="font-label-sm text-label-sm uppercase tracking-wider text-secondary">TikTok (URL)</label>
+          <input
+            className="w-full px-space-md py-space-sm rounded-lg bg-surface-container-high text-on-surface font-body-md text-body-md focus:outline-none focus:ring-2 focus:ring-primary"
+            placeholder="https://www.tiktok.com/@tu_barberia"
+            value={form.tiktok_url ?? ""}
+            onChange={update("tiktok_url")}
           />
         </div>
 

@@ -74,9 +74,22 @@ export function Footer() {
           <div className="flex flex-col gap-space-xs">
             <span className="font-headline-sm text-headline-sm text-primary">Mundo {nombre}</span>
             <p className="font-body-sm text-body-sm text-on-surface-variant">
-              Sigue la estética del club y las publicaciones editoriales de sastrería capilar.
+              Mira los cortes del día, novedades y promociones en nuestras redes.
             </p>
             <div className="flex items-center gap-space-xs">
+              {config?.tiktok_url && (
+                <a
+                  aria-label="TikTok"
+                  className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary border border-outline-variant/30 hover:border-primary hover:text-primary transition-colors"
+                  href={config.tiktok_url}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  <svg aria-hidden="true" className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.09v12.4a2.59 2.59 0 1 1-1.86-2.48V9.77a5.72 5.72 0 1 0 4.95 5.66V9.01a7.35 7.35 0 0 0 4.3 1.38V7.3a4.29 4.29 0 0 1-3.24-1.48z" />
+                  </svg>
+                </a>
+              )}
               {config?.instagram_url && (
                 <a
                   className="w-10 h-10 rounded-lg bg-surface-container flex items-center justify-center text-secondary border border-outline-variant/30 hover:border-primary hover:text-primary transition-colors"
@@ -107,7 +120,7 @@ export function Footer() {
                   <span className="material-symbols-outlined text-[20px]">chat</span>
                 </a>
               )}
-              {!config?.instagram_url && !config?.facebook_url && !config?.telefono_whatsapp && (
+              {!config?.tiktok_url && !config?.instagram_url && !config?.facebook_url && !config?.telefono_whatsapp && (
                 <span className="font-body-sm text-body-sm text-outline">Próximamente</span>
               )}
             </div>

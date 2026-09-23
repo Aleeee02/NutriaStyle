@@ -81,5 +81,6 @@ class ConfiguracionBody(BaseModel):
     horario: str | None = None
     instagram_url: str | None = None
     facebook_url: str | None = None
+    tiktok_url: str | None = None
     mision: str | None = None
     vision: str | None = None
