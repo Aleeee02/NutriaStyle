@@ -131,14 +131,11 @@ export function Footer() {
             © {new Date().getFullYear()} {nombre}. Tradición secular, precisión vanguardista.
           </span>
           <div className="flex items-center gap-space-md">
-            <a className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="#">
+            <Link className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" to="/privacidad">
               Privacidad
-            </a>
-            <a className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" href="#">
-              Términos del Club
-            </a>
-            <Link className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" to="/fidelizacion">
-              Membresías
+            </Link>
+            <Link className="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant hover:text-primary transition-colors" to="/terminos">
+              Términos y Condiciones
             </Link>
           </div>
         </div>

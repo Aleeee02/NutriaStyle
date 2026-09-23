@@ -5,6 +5,10 @@
 // internos del equipo (comision del barbero por combo, como verificar el
 // carnet, etc.) no se ponen aqui.
 
+// Sellos para el corte de cortesia. Debe coincidir con SELLOS_META en
+// backend/app/constants.py (la API es la que manda; esto es solo para textos).
+export const SELLOS_META = 4;
+
 export interface Combo {
   id: string;
   nombre: string;

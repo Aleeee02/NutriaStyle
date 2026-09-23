@@ -7,6 +7,7 @@ import Home from "./pages/Home";
 import Barberos from "./pages/Barberos";
 import Tarifas from "./pages/Tarifas";
 import Promociones from "./pages/Promociones";
+import { Privacidad, Terminos } from "./pages/Legal";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import AuthCallback from "./pages/AuthCallback";
@@ -33,6 +34,8 @@ export default function App() {
       <Route path="/barberos" element={<Layout><Barberos /></Layout>} />
       <Route path="/tarifas" element={<Layout><Tarifas /></Layout>} />
       <Route path="/promociones" element={<Layout><Promociones /></Layout>} />
+      <Route path="/privacidad" element={<Layout><Privacidad /></Layout>} />
+      <Route path="/terminos" element={<Layout><Terminos /></Layout>} />
       <Route path="/login" element={<Layout><Login /></Layout>} />
       <Route path="/registro" element={<Layout><Registro /></Layout>} />
       <Route path="/auth/callback" element={<AuthCallback />} />
