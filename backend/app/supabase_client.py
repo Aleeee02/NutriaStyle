@@ -4,7 +4,7 @@ from pathlib import Path
 
 import httpx
 from dotenv import load_dotenv
-from supabase import Client, create_client
+from supabase import Client, ClientOptions, create_client
 
 load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
@@ -18,34 +18,27 @@ _lock = threading.Lock()
 
 
 def _crear_cliente(key: str) -> Client:
-    """create_client, pero con HTTP/1.1 en vez de HTTP/2.
+    """create_client con un cliente HTTP/1.1 propio.
 
-    supabase-py 2.11 fija http2=True en sus clientes httpx. La implementacion
+    supabase-py crea sus clientes httpx con http2=True. La implementacion
     HTTP/2 de httpcore corta requests con "Server disconnected" cuando hay
     varias a la vez (hilos del servidor + consultas en paralelo), y ademas el
     error queda pegado a la conexion. Con HTTP/1.1 el pool de httpx es seguro
-    entre hilos y reutiliza conexiones igual.
+    entre hilos y reutiliza conexiones igual. Desde la 2.2x la libreria acepta
+    el cliente por ClientOptions(httpx_client=...), sin tocar sus internos.
+
+    Funciona con las claves nuevas (sb_publishable_... / sb_secret_...) y con
+    las antiguas tipo JWT.
     """
-    client = create_client(SUPABASE_URL, key)
-
-    pg = client.postgrest
-    anterior = pg.session
-    pg.session = httpx.Client(
-        base_url=anterior.base_url,
-        headers=anterior.headers,
-        timeout=anterior.timeout,
-        follow_redirects=True,
-        http2=False,
+    http = httpx.Client(timeout=httpx.Timeout(30.0), follow_redirects=True, http2=False)
+    opciones = ClientOptions(
+        httpx_client=http,
+        # Es un servidor: la sesion de cada usuario viaja en su cookie, no se
+        # guarda ni se refresca en este cliente compartido.
+        persist_session=False,
+        auto_refresh_token=False,
     )
-    anterior.close()
-
-    # auth y auth.admin comparten el mismo cliente httpx: se cambian los dos.
-    auth_http = client.auth._http_client
-    nuevo_auth_http = httpx.Client(timeout=auth_http.timeout, follow_redirects=True, http2=False)
-    client.auth._http_client = nuevo_auth_http
-    client.auth.admin._http_client = nuevo_auth_http
-    auth_http.close()
-    return client
+    return create_client(SUPABASE_URL, key, options=opciones)
 
 
 def get_supabase() -> Client:
