@@ -27,5 +27,6 @@ export function destinoTrasLogin(user: CurrentUser): string {
   if (guardado && interna) {
     return guardado;
   }
-  return user.is_admin ? "/admin" : "/fidelizacion";
+  if (user.is_admin) return "/admin";
+  return user.is_staff ? "/escanear" : "/fidelizacion";
 }

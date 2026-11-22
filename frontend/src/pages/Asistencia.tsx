@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import { api, ApiError } from "../lib/api";
 import { soles } from "../lib/moneda";
 import type { AsistenciaVistaPrevia } from "../lib/types";
@@ -8,6 +9,7 @@ import type { AsistenciaVistaPrevia } from "../lib/types";
 // Destino del QR de la cita. Lo abre el admin o un barbero al escanearlo con
 // la camara: muestra de quien es la cita y registra si llego o no.
 export default function Asistencia() {
+  const { user } = useAuth();
   const [params] = useSearchParams();
   const codigo = params.get("c") ?? "";
   const [registrado, setRegistrado] = useState<"completada" | "no_asistio" | null>(null);
@@ -110,9 +112,20 @@ export default function Asistencia() {
             </>
           )
         )}
-        <Link className="font-label-sm text-label-sm uppercase tracking-wider text-outline hover:text-primary" to="/admin/reservas">
-          Ver agenda
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-space-md">
+          <Link
+            className="inline-flex items-center gap-space-2xs px-space-md py-space-xs rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm uppercase tracking-wider hover:bg-surface-container-highest transition-colors"
+            to="/escanear"
+          >
+            <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+            Escanear otro QR
+          </Link>
+          {user?.is_admin && (
+            <Link className="font-label-sm text-label-sm uppercase tracking-wider text-outline hover:text-primary" to="/admin/reservas">
+              Ver agenda
+            </Link>
+          )}
+        </div>
       </div>
     </main>
   );

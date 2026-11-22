@@ -26,7 +26,8 @@ export default function AuthCallback() {
         // El staff que llego escaneando un QR va directo al canje; completar
         // el perfil puede esperar a que no haya un cliente delante.
         const destino = destinoTrasLogin(user);
-        if (!user.perfil_completo && !destino.startsWith("/canjear")) {
+        const esEscaneo = ["/canjear", "/asistencia", "/escanear"].some((r) => destino.startsWith(r));
+        if (!user.perfil_completo && !esEscaneo) {
           navigate("/completar-perfil", { replace: true });
         } else {
           navigate(destino, { replace: true });

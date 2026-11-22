@@ -1,12 +1,14 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
+import { useAuth } from "../auth/AuthContext";
 import { api, ApiError } from "../lib/api";
 import type { CanjeVistaPrevia } from "../lib/types";
 
 // Destino del QR del cliente. Lo abre el admin o un barbero al escanear con
 // la camara del celular: muestra de quien es el codigo y pide confirmar.
 export default function Canjear() {
+  const { user } = useAuth();
   const [params] = useSearchParams();
   const codigo = params.get("c") ?? "";
   const [estado, setEstado] = useState<"pendiente" | "canjeando" | "canjeado">("pendiente");
@@ -79,9 +81,20 @@ export default function Canjear() {
             </>
           )
         )}
-        <Link className="font-label-sm text-label-sm uppercase tracking-wider text-outline hover:text-primary" to="/">
-          Volver al inicio
-        </Link>
+        <div className="flex flex-wrap items-center justify-center gap-space-md">
+          <Link
+            className="inline-flex items-center gap-space-2xs px-space-md py-space-xs rounded-lg bg-surface-container-high text-on-surface font-label-sm text-label-sm uppercase tracking-wider hover:bg-surface-container-highest transition-colors"
+            to="/escanear"
+          >
+            <span className="material-symbols-outlined text-[18px]">qr_code_scanner</span>
+            Escanear otro QR
+          </Link>
+          {user?.is_admin && (
+            <Link className="font-label-sm text-label-sm uppercase tracking-wider text-outline hover:text-primary" to="/admin/reservas">
+              Ver agenda
+            </Link>
+          )}
+        </div>
       </div>
     </main>
   );

@@ -49,6 +49,17 @@ export function Header() {
           </Link>
           {user ? (
             <div className="flex items-center gap-space-xs pl-space-xs border-l border-outline-variant/40">
+              {user.is_staff && (
+                <Link
+                  aria-label="Escanear QR"
+                  className="inline-flex items-center gap-1 font-label-md text-label-md uppercase tracking-wider text-primary hover:text-primary-fixed-dim transition-colors font-bold"
+                  title="Escanear QR"
+                  to="/escanear"
+                >
+                  <span className="material-symbols-outlined text-[22px]">qr_code_scanner</span>
+                  <span className="hidden md:inline">Escanear</span>
+                </Link>
+              )}
               {user.is_admin && (
                 <Link
                   className="font-label-md text-label-md uppercase tracking-wider text-primary hover:text-primary-fixed-dim transition-colors font-bold"

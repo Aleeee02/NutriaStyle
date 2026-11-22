@@ -14,6 +14,7 @@ import AuthCallback from "./pages/AuthCallback";
 import CompletarPerfil from "./pages/CompletarPerfil";
 import Canjear from "./pages/Canjear";
 import Asistencia from "./pages/Asistencia";
+import Escanear from "./pages/Escanear";
 import Reservas from "./pages/Reservas";
 import Fidelizacion from "./pages/Fidelizacion";
 
@@ -40,6 +41,16 @@ export default function App() {
       <Route path="/login" element={<Layout><Login /></Layout>} />
       <Route path="/registro" element={<Layout><Registro /></Layout>} />
       <Route path="/auth/callback" element={<AuthCallback />} />
+      <Route
+        path="/escanear"
+        element={
+          <RequireStaff>
+            <Layout>
+              <Escanear />
+            </Layout>
+          </RequireStaff>
+        }
+      />
       <Route
         path="/asistencia"
         element={
