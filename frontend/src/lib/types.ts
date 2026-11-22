@@ -40,6 +40,15 @@ export interface Empleado {
   descripcion: string | null;
   activo: boolean;
   usuario_id: string | null;
+  usuarios?: { email: string | null } | null;
+}
+
+export interface CambioRol {
+  rol: string;
+  ficha: {
+    accion: "creado" | "vinculado" | "activado" | "desactivado" | "ya_vinculado";
+    empleado: Empleado;
+  } | null;
 }
 
 export interface Horario {

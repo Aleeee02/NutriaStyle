@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.auth import olvidar_rol, require_admin
 from app.asistencias import marcar_no_asistidas
+from app.barberos import sincronizar_ficha
 from app.canjes import canjear_tarjeta
 from app.resenas import cambiar_aprobacion, eliminar as eliminar_resena, listar_para_admin
 from app.concurrencia import en_paralelo
@@ -90,7 +91,7 @@ def admin_servicio_toggle_activo(servicio_id: str):
 @router.get("/empleados")
 def admin_empleados_list():
     admin = get_supabase_admin()
-    return admin.table("empleados").select("*").order("created_at", desc=True).execute().data
+    return admin.table("empleados").select("*, usuarios(email)").order("created_at", desc=True).execute().data
 
 
 @router.get("/empleados/{empleado_id}")
@@ -264,7 +265,7 @@ def admin_usuario_cambiar_rol(usuario_id: str, body: RolBody):
         raise HTTPException(status_code=400, detail="Rol no válido")
 
     admin = get_supabase_admin()
-    actual = admin.table("usuarios").select("rol").eq("id", usuario_id).limit(1).execute().data
+    actual = admin.table("usuarios").select("id, nombre, apellido, telefono, rol").eq("id", usuario_id).limit(1).execute().data
     if not actual:
         raise HTTPException(status_code=404, detail="Usuario no encontrado")
     if actual[0].get("rol") == "admin":
@@ -272,7 +273,10 @@ def admin_usuario_cambiar_rol(usuario_id: str, body: RolBody):
 
     admin.table("usuarios").update({"rol": body.rol}).eq("id", usuario_id).execute()
     olvidar_rol(usuario_id)
-    return {"rol": body.rol}
+    # El rol es un permiso; la ficha de Empleados es lo que ven los clientes al
+    # reservar. Se mantienen en sintonia (ver app/barberos.py).
+    ficha = sincronizar_ficha(actual[0], body.rol)
+    return {"rol": body.rol, "ficha": ficha}
 
 
 # ---------- Resenas ----------

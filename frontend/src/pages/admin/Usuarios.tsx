@@ -2,7 +2,8 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { EstadoCarga } from "../../components/EstadoCarga";
 import { useRef, useState } from "react";
 import { api, ApiError } from "../../lib/api";
-import type { UsuarioAdmin } from "../../lib/types";
+import { Link } from "react-router-dom";
+import type { CambioRol, UsuarioAdmin } from "../../lib/types";
 
 type UsuariosData = { usuarios: UsuarioAdmin[]; sellos_meta: number };
 const USUARIOS_KEY = ["admin", "usuarios"];
@@ -10,6 +11,8 @@ const USUARIOS_KEY = ["admin", "usuarios"];
 export default function AdminUsuarios() {
   const queryClient = useQueryClient();
   const [error, setError] = useState<string | null>(null);
+  // Que paso con la ficha de Empleados tras cambiar un rol.
+  const [aviso, setAviso] = useState<{ texto: string; horariosDe?: string } | null>(null);
   const { data, isPending, isError, refetch } = useQuery({
     queryKey: USUARIOS_KEY,
     queryFn: () => api.get<UsuariosData>("/admin/usuarios"),
@@ -72,9 +75,26 @@ export default function AdminUsuarios() {
   }
 
   function cambiarRol(id: string, rol: string) {
+    setAviso(null);
     ejecutar(
       () => editarLocal(id, () => ({ rol })),
-      () => api.put(`/admin/usuarios/${id}/rol`, { rol }),
+      async () => {
+        const r = await api.put<CambioRol>(`/admin/usuarios/${id}/rol`, { rol });
+        // La ficha de Empleados tambien cambio: refrescar Empleados y las reservas.
+        queryClient.invalidateQueries({ queryKey: ["admin", "empleados"] });
+        queryClient.invalidateQueries({ queryKey: ["empleados"] });
+        const f = r.ficha;
+        if (!f) return;
+        const nombre = `${f.empleado.nombre} ${f.empleado.apellido ?? ""}`.trim();
+        const textos: Record<string, string> = {
+          creado: `${nombre} se agregó a Empleados. Ponle su horario para que los clientes puedan reservar con él.`,
+          vinculado: `Su cuenta quedó conectada con la ficha "${nombre}" que ya tenías en Empleados.`,
+          activado: `La ficha de ${nombre} en Empleados volvió a estar activa: ya aparece para reservar.`,
+          desactivado: `La ficha de ${nombre} quedó inactiva: ya no aparece para reservar. Sus citas ya agendadas se mantienen.`,
+          ya_vinculado: `${nombre} ya estaba conectado con su ficha de Empleados.`,
+        };
+        setAviso({ texto: textos[f.accion], horariosDe: f.accion === "creado" ? f.empleado.id : undefined });
+      },
       "No se pudo cambiar el rol."
     );
   }
@@ -111,6 +131,17 @@ export default function AdminUsuarios() {
       {error && (
         <div className="p-space-sm rounded-lg bg-error-container/20 border border-error/40 text-error font-body-sm text-body-sm">
           {error} Se recargaron los datos reales.
+        </div>
+      )}
+      {aviso && (
+        <div className="flex flex-wrap items-center gap-space-sm p-space-sm rounded-lg bg-secondary-container/40 border border-secondary/40 text-secondary font-body-sm text-body-sm">
+          <span className="material-symbols-outlined text-[20px]">badge</span>
+          <span className="flex-1">{aviso.texto}</span>
+          {aviso.horariosDe && (
+            <Link className="font-label-sm text-label-sm uppercase tracking-wider text-primary hover:underline" to={`/admin/empleados/${aviso.horariosDe}/horarios`}>
+              Poner horario →
+            </Link>
+          )}
         </div>
       )}
 

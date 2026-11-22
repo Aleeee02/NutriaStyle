@@ -48,6 +48,11 @@ export default function AdminEmpleados() {
                 <tr key={e.id} className="border-t border-outline-variant/20">
                   <td className="py-space-sm px-space-md text-on-surface font-medium">
                     {e.nombre} {e.apellido || ""}
+                    {e.usuarios?.email ? (
+                      <span className="block font-body-sm text-[12px] text-outline">Cuenta: {e.usuarios.email}</span>
+                    ) : (
+                      <span className="block font-body-sm text-[12px] text-outline">Sin cuenta vinculada</span>
+                    )}
                   </td>
                   <td className="py-space-sm px-space-md text-on-surface-variant">{e.telefono || "-"}</td>
                   <td className="py-space-sm px-space-md">
