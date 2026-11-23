@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api } from "../lib/api";
 import { urlComoLlegar, urlMapaEmbebido } from "../lib/mapa";
+import { GaleriaCortes } from "../components/GaleriaCortes";
 import { soles } from "../lib/moneda";
 import { COMBOS, DESCUENTO_FFAA_PNP } from "../lib/promociones";
 import type { Configuracion } from "../lib/types";
@@ -163,6 +164,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+
+        {/* Galeria de cortes reales */}
+        <GaleriaCortes />
 
         {/* Promociones */}
         <section className="w-full bg-background pt-space-3xl">
