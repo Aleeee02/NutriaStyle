@@ -278,7 +278,7 @@ from (values
   ('Barba',  'Barba',                      null,                                                                                                                          10, 25),
   ('Otros',  'Cejas',                      'Arreglo de cejas.',                                                                                                            5, 15),
   ('Combos', 'Combo 1 · Corte Clásico',    'Corte clásico + mascarilla facial + una bebida de cortesía. Precio fijo para todos, no acumulable con otros descuentos.',                     20, 45),
-  ('Combos', 'Combo 2 · Corte con Diseño', 'Corte con diseño + arreglo de ceja + mascarilla facial + una bebida de cortesía. Precio fijo para todos, no acumulable con otros descuentos.', 25, 60)
+  ('Combos', 'Combo 2 · Corte con Diseño', 'Corte con diseño + mascarilla facial + una bebida de cortesía. Precio fijo para todos, no acumulable con otros descuentos.', 25, 60)
 ) as s (categoria, nombre, descripcion, precio, duracion)
 join public.categorias_servicio c on c.nombre = s.categoria;
 

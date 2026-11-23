@@ -32,7 +32,7 @@ export const COMBOS: Combo[] = [
     nombre: "Combo 2",
     titulo: "Corte con Diseño",
     precio: 25,
-    incluye: ["Corte con diseño", "Arreglo de ceja", "Mascarilla facial"],
+    incluye: ["Corte con diseño", "Mascarilla facial"],
     cortesia: "Una bebida de cortesía",
   },
 ];
