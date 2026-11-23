@@ -28,6 +28,8 @@ export default function AdminReservas() {
       setError(err instanceof ApiError ? err.message : "No se pudo cambiar el estado.");
     } finally {
       queryClient.invalidateQueries({ queryKey: ["admin", "reservas"] });
+      // Completar o descompletar una cita cambia los sellos del cliente.
+      queryClient.invalidateQueries({ queryKey: ["admin", "usuarios"] });
     }
   }
 

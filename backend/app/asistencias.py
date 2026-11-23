@@ -11,6 +11,7 @@ from datetime import timedelta
 
 from fastapi import HTTPException
 
+from app.sellos import sellar_cita
 from app.supabase_client import SUPABASE_SERVICE_ROLE_KEY, get_supabase_admin
 from app.tiempo import ahora
 
@@ -118,7 +119,9 @@ def registrar(codigo: str, asistio: bool) -> dict:
     if not actualizada:
         raise HTTPException(status_code=410, detail=CODIGO_INVALIDO)
 
-    return {**_resumen({**reserva, "estado": nuevo_estado}), "estado": nuevo_estado}
+    # Asistir suma el sello de la tarjeta (una sola vez por cita).
+    sello = sellar_cita(reserva) if asistio else None
+    return {**_resumen({**reserva, "estado": nuevo_estado}), "estado": nuevo_estado, "sello": sello}
 
 
 def cancelar_reserva(reserva_id: str, usuario_id: str) -> dict:

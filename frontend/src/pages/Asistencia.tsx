@@ -4,7 +4,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useAuth } from "../auth/AuthContext";
 import { api, ApiError } from "../lib/api";
 import { soles } from "../lib/moneda";
-import type { AsistenciaVistaPrevia } from "../lib/types";
+import type { AsistenciaVistaPrevia, Sello } from "../lib/types";
 
 // Destino del QR de la cita. Lo abre el admin o un barbero al escanearlo con
 // la camara: muestra de quien es la cita y registra si llego o no.
@@ -13,6 +13,7 @@ export default function Asistencia() {
   const [params] = useSearchParams();
   const codigo = params.get("c") ?? "";
   const [registrado, setRegistrado] = useState<"completada" | "no_asistio" | null>(null);
+  const [sello, setSello] = useState<Sello | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [errorEnvio, setErrorEnvio] = useState<string | null>(null);
 
@@ -27,6 +28,7 @@ export default function Asistencia() {
     setErrorEnvio(null);
     try {
       const r = await api.post<AsistenciaVistaPrevia>("/asistencia", { codigo, asistio });
+      setSello(r.sello ?? null);
       setRegistrado(r.estado === "completada" ? "completada" : "no_asistio");
     } catch (err) {
       setErrorEnvio(err instanceof ApiError ? err.message : "No se pudo registrar la asistencia.");
@@ -59,10 +61,18 @@ export default function Asistencia() {
               La cita de <strong className="text-primary">{data?.cliente}</strong> quedó como{" "}
               <strong>{registrado === "completada" ? "completada" : "no asistió"}</strong> en la agenda. Este QR ya no sirve.
             </p>
-            {registrado === "completada" && (
-              <p className="font-body-sm text-body-sm text-outline">
-                Recuerda marcar su sello de fidelización en Usuarios si le corresponde.
-              </p>
+            {registrado === "completada" && sello && (
+              <div className="w-full flex flex-col items-center gap-space-2xs p-space-md rounded-xl bg-surface-container">
+                <span className="font-label-sm text-label-sm uppercase tracking-widest text-secondary">+1 sello sumado</span>
+                <span className="font-headline-md text-headline-md text-primary font-bold">
+                  {Math.min(sello.sellos, sello.meta)} de {sello.meta}
+                </span>
+                {sello.sellos >= sello.meta && (
+                  <span className="font-body-sm text-body-sm text-on-surface">
+                    ¡Ya tiene su corte gratis! Puede mostrar su QR de canje en su próxima visita.
+                  </span>
+                )}
+              </div>
             )}
           </>
         ) : codigo && isPending ? (

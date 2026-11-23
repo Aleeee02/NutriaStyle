@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from app.auth import olvidar_rol, require_admin
 from app.asistencias import marcar_no_asistidas
 from app.barberos import sincronizar_ficha
+from app.sellos import devolver_sello_cita, sellar_cita, sumar_sello_manual
 from app.canjes import canjear_tarjeta
 from app.resenas import cambiar_aprobacion, eliminar as eliminar_resena, listar_para_admin
 from app.concurrencia import en_paralelo
@@ -212,36 +213,7 @@ def admin_usuarios_list():
 
 @router.post("/usuarios/{usuario_id}/sello")
 def admin_usuario_agregar_sello(usuario_id: str):
-    admin = get_supabase_admin()
-
-    # El update exige que los sellos sigan siendo los leidos. Sin eso, dos
-    # clics seguidos leian el mismo valor y uno de los sellos se perdia.
-    for _ in range(5):
-        tarjeta = admin.table("tarjetas_fidelizacion").select("id, sellos").eq("usuario_id", usuario_id).limit(1).execute().data
-        if not tarjeta:
-            creada = admin.table("tarjetas_fidelizacion").insert({"usuario_id": usuario_id, "sellos": 1}).execute().data
-            tarjeta_id, nuevo_total = creada[0]["id"], 1
-            break
-        nuevo_total = tarjeta[0]["sellos"] + 1
-        actualizado = (
-            admin.table("tarjetas_fidelizacion")
-            .update({"sellos": nuevo_total})
-            .eq("id", tarjeta[0]["id"])
-            .eq("sellos", tarjeta[0]["sellos"])
-            .execute()
-            .data
-        )
-        if actualizado:
-            tarjeta_id = tarjeta[0]["id"]
-            break
-    else:
-        raise HTTPException(status_code=409, detail="La tarjeta cambió mientras se sellaba. Inténtalo de nuevo.")
-
-    admin.table("movimientos_fidelizacion").insert(
-        {"tarjeta_id": tarjeta_id, "tipo": "ganancia", "cantidad": 1, "descripcion": "Sello agregado por el salón"}
-    ).execute()
-
-    return {"sellos": nuevo_total}
+    return sumar_sello_manual(usuario_id)
 
 
 @router.post("/usuarios/{usuario_id}/canjear")
@@ -319,8 +291,19 @@ def admin_reservas_list(estado: str = ""):
 def admin_reserva_cambiar_estado(reserva_id: str, body: EstadoReservaBody):
     if body.estado not in ESTADOS_RESERVA:
         raise HTTPException(status_code=400, detail="Estado inválido")
-    fila = get_supabase_admin().table("reservas").update({"estado": body.estado}).eq("id", reserva_id).execute().data
-    return fila[0]
+    admin = get_supabase_admin()
+    antes = admin.table("reservas").select("id, usuario_id, estado").eq("id", reserva_id).limit(1).execute().data
+    if not antes:
+        raise HTTPException(status_code=404, detail="Reserva no encontrada")
+    fila = admin.table("reservas").update({"estado": body.estado}).eq("id", reserva_id).execute().data
+
+    # Completar una cita suma su sello; sacarla de "completada" lo devuelve.
+    sello = None
+    if body.estado == "completada" and antes[0]["estado"] != "completada":
+        sello = sellar_cita(antes[0])
+    elif antes[0]["estado"] == "completada" and body.estado != "completada":
+        sello = devolver_sello_cita(antes[0], body.estado)
+    return {**fila[0], "sello": sello}
 
 
 # ---------- Configuracion del negocio ----------

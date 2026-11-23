@@ -233,7 +233,7 @@ export function Terminos() {
             <>
               Al juntar <strong>{SELLOS_META} sellos</strong> obtienes un corte de cortesía.
             </>,
-            "Los sellos los marca el personal del salón por cada servicio pagado.",
+            "Sumas un sello por cada cita a la que asistes: se registra solo cuando el salón escanea el QR de tu cita.",
             "Los sellos y el corte de cortesía son personales: no se transfieren, no se canjean por dinero ni se suman a otras promociones.",
             "Para canjear, muestra el QR de tu tarjeta; es de un solo uso y al canjearlo la tarjeta vuelve a empezar.",
             "Si hay un error al marcar sellos, el salón puede corregirlo.",

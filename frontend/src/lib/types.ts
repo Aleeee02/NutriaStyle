@@ -93,7 +93,13 @@ export interface FidelizacionData {
   codigo_asistencia: string | null;
 }
 
+export interface Sello {
+  sellos: number;
+  meta: number;
+}
+
 export interface AsistenciaVistaPrevia {
+  sello?: Sello | null;
   reserva_id: string;
   cliente: string;
   email: string | null;
